@@ -3,80 +3,579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinOps</title>
+    <title>Investment Risk Profile Assessment</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow-x: hidden;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fc;
         }
-
-        .parallax {
-            background-color: #a47864; /* Replace with your desired color */
-            height: 100vh;
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-        .content {
+        
+        h1, h2 {
+            color: #2c3e50;
             text-align: center;
-            padding: 50px;
-            color: white;
-            background-color: #a47864;
         }
-
-        .content h1, .content p {
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .graph-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .risk-spectrum {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .risk-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        
+        .risk-labels div {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #3498db;
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translate(-50%, -50%);
+        }
+        
+        .node:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .node-details {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            width: 280px;
+        }
+        
+        .node-details h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+        
+        .slider-container {
+            margin: 20px 0;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 30px auto 0;
+        }
+        
+        button:hover {
+            background-color: #34495e;
+        }
+        
+        .profile-result {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin: 30px 0;
         }
     </style>
 </head>
 <body>
-
-    <div class="content">
-        <h1 id="typewriter"></h1>
-        <p id="typewriter-desc"></p>
+    <div class="container">
+        <h1>Investment Risk Profile Assessment</h1>
+        <p>Explore different investment options along the risk spectrum. Click on each bubble to set your interest level in each investment type, then generate your personalized risk profile.</p>
+        
+        <div class="risk-spectrum">
+            <div>Lower Risk</div>
+            <div>Higher Risk</div>
+        </div>
+        
+        <div class="graph-container" id="graph">
+            <!-- Nodes will be added here via JavaScript -->
+        </div>
+        
+        <div class="risk-labels">
+            <div>Conservative</div>
+            <div>Moderate-Conservative</div>
+            <div>Moderate</div>
+            <div>Moderate-Aggressive</div>
+            <div>Aggressive</div>
+        </div>
+        
+        <button id="generate-profile">Generate My Risk Profile</button>
+        
+        <div class="profile-result" id="profile-result">
+            <h2>Your Investment Risk Profile</h2>
+            <p id="profile-description"></p>
+            <div class="chart-container">
+                <canvas id="allocation-chart"></canvas>
+            </div>
+            <div id="recommendations"></div>
+        </div>
     </div>
-    <script>
-        const titleText = "💲Investitor Much?";
-        const descText = "Deții o sumă de bani pe care intenționezi să o plasezi pe piața de capital, prin cumpărarea de instrumente financiare";
-        const titleElem = document.getElementById("typewriter");
-        const descElem = document.getElementById("typewriter-desc");
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="node-details" id="node-details">
+        <span class="close-btn" id="close-btn">&times;</span>
+        <h3 id="detail-title">Investment Type</h3>
+        <p id="detail-description">Description of this investment type.</p>
+        <div class="slider-container">
+            <label for="interest-slider">Your Interest Level:</label>
+            <input type="range" id="interest-slider" min="0" max="100" value="50">
+            <div class="value-display">
+                <span>Not Interested</span>
+                <span id="interest-value">50%</span>
+                <span>Very Interested</span>
+            </div>
+        </div>
+    </div>
 
-        function typeWriter(text, elem, delay = 60, callback) {
-            let i = 0;
-            function typing() {
-                if (i < text.length) {
-                    elem.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(typing, delay);
-                } else if (callback) {
-                    callback();
-                }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // Investment options data
+        const investmentOptions = [
+            {
+                id: 'savings',
+                name: 'Savings Accounts',
+                description: 'Secure bank accounts with guaranteed, but typically low returns. FDIC insured up to $250,000.',
+                riskLevel: 5, // 0-100 scale
+                verticalPosition: 70,
+                color: '#3498db',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'cds',
+                name: 'Certificates of Deposit',
+                description: 'Time deposits with banks that offer higher interest rates than savings accounts but restrict access to funds for a specified period.',
+                riskLevel: 10,
+                verticalPosition: 30,
+                color: '#2ecc71',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'bonds',
+                name: 'Government Bonds',
+                description: 'Debt securities issued by governments, generally considered low-risk investments with moderate returns.',
+                riskLevel: 20,
+                verticalPosition: 50,
+                color: '#f1c40f',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'corporate-bonds',
+                name: 'Corporate Bonds',
+                description: 'Debt issued by companies to raise capital. Typically offer higher yields than government bonds but carry more risk.',
+                riskLevel: 35,
+                verticalPosition: 80,
+                color: '#e67e22',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'dividend-stocks',
+                name: 'Dividend Stocks',
+                description: 'Shares in companies that regularly distribute a portion of their earnings to shareholders.',
+                riskLevel: 45,
+                verticalPosition: 40,
+                color: '#9b59b6',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'index-funds',
+                name: 'Index ETFs',
+                description: 'Exchange-traded funds that track the performance of a specific index like the S&P 500, providing broad market exposure.',
+                riskLevel: 55,
+                verticalPosition: 60,
+                color: '#1abc9c',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'growth-stocks',
+                name: 'Growth Stocks',
+                description: 'Shares in companies expected to grow at an above-average rate compared to other companies in the market.',
+                riskLevel: 70,
+                verticalPosition: 30,
+                color: '#e74c3c',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'real-estate',
+                name: 'REITs',
+                description: 'Real Estate Investment Trusts that own, operate, or finance income-generating real estate across various property sectors.',
+                riskLevel: 65,
+                verticalPosition: 70,
+                color: '#f39c12',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'commodities',
+                name: 'Commodities',
+                description: 'Physical goods such as gold, silver, oil, or agricultural products that can be traded on exchanges.',
+                riskLevel: 80,
+                verticalPosition: 50,
+                color: '#16a085',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'futures',
+                name: 'Futures & Options',
+                description: 'Derivative contracts that give the right to buy or sell assets at predetermined prices in the future.',
+                riskLevel: 90,
+                verticalPosition: 20,
+                color: '#8e44ad',
+                interest: 50,
+                allocation: 0
+            },
+            {
+                id: 'crypto',
+                name: 'Cryptocurrency',
+                description: 'Digital or virtual currencies that use cryptography for security and operate on decentralized networks.',
+                riskLevel: 95,
+                verticalPosition: 80,
+                color: '#d35400',
+                interest: 50,
+                allocation: 0
             }
-            typing();
+        ];
+
+        // DOM elements
+        const graphContainer = document.getElementById('graph');
+        const nodeDetails = document.getElementById('node-details');
+        const overlay = document.getElementById('overlay');
+        const closeBtn = document.getElementById('close-btn');
+        const detailTitle = document.getElementById('detail-title');
+        const detailDescription = document.getElementById('detail-description');
+        const interestSlider = document.getElementById('interest-slider');
+        const interestValue = document.getElementById('interest-value');
+        const generateBtn = document.getElementById('generate-profile');
+        const profileResult = document.getElementById('profile-result');
+        const profileDescription = document.getElementById('profile-description');
+        const recommendations = document.getElementById('recommendations');
+
+        let currentOption = null;
+        let allocationChart = null;
+
+        // Create nodes on the graph
+        function createNodes() {
+            investmentOptions.forEach(option => {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.id = option.id;
+                node.style.backgroundColor = option.color;
+                node.style.left = `${option.riskLevel}%`;
+                node.style.top = `${option.verticalPosition}%`;
+                node.textContent = option.name;
+                
+                node.addEventListener('click', () => {
+                    openNodeDetails(option);
+                });
+                
+                graphContainer.appendChild(node);
+            });
         }
 
-        typeWriter(titleText, titleElem, 80, () => {
-            setTimeout(() => {
-                typeWriter(descText, descElem, 30);
-            }, 400);
+        // Open node details
+        function openNodeDetails(option) {
+            currentOption = option;
+            detailTitle.textContent = option.name;
+            detailDescription.textContent = option.description;
+            interestSlider.value = option.interest;
+            interestValue.textContent = `${option.interest}%`;
+            
+            nodeDetails.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Close node details
+        function closeNodeDetails() {
+            nodeDetails.style.display = 'none';
+            overlay.style.display = 'none';
+            currentOption = null;
+        }
+
+        // Update interest value
+        interestSlider.addEventListener('input', () => {
+            if (currentOption) {
+                const value = interestSlider.value;
+                interestValue.textContent = `${value}%`;
+                currentOption.interest = parseInt(value);
+                
+                // Update node size based on interest
+                const node = document.getElementById(currentOption.id);
+                const scale = 0.5 + (currentOption.interest / 100) * 0.5;
+                node.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            }
         });
+
+        // Close details when clicking on close button or overlay
+        closeBtn.addEventListener('click', closeNodeDetails);
+        overlay.addEventListener('click', closeNodeDetails);
+
+        // Generate risk profile
+        generateBtn.addEventListener('click', () => {
+            profileResult.style.display = 'block';
+            calculateRiskProfile();
+            
+            // Scroll to results
+            profileResult.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Calculate risk profile
+        function calculateRiskProfile() {
+            // Calculate weighted risk score
+            let totalInterest = 0;
+            let weightedRiskScore = 0;
+            
+            investmentOptions.forEach(option => {
+                totalInterest += option.interest;
+                weightedRiskScore += option.interest * option.riskLevel;
+            });
+            
+            const averageRiskScore = totalInterest > 0 ? weightedRiskScore / totalInterest : 50;
+            
+            // Determine risk profile
+            let riskProfile;
+            let description;
+            
+            if (averageRiskScore < 20) {
+                riskProfile = "Conservative";
+                description = "You prioritize preserving capital and are comfortable with low returns in exchange for security. You prefer stable, low-risk investments.";
+            } else if (averageRiskScore < 40) {
+                riskProfile = "Moderate-Conservative";
+                description = "You seek modest growth while still maintaining a significant portion of safer investments. You're willing to accept some market fluctuations.";
+            } else if (averageRiskScore < 60) {
+                riskProfile = "Moderate";
+                description = "You balance growth and stability. You accept market volatility to achieve better long-term returns while maintaining some safer investments.";
+            } else if (averageRiskScore < 80) {
+                riskProfile = "Moderate-Aggressive";
+                description = "You prioritize growth and are comfortable with significant market fluctuations. You're willing to take calculated risks for potentially higher returns.";
+            } else {
+                riskProfile = "Aggressive";
+                description = "You seek maximum growth and are comfortable with substantial volatility. You can tolerate significant losses in pursuit of high returns.";
+            }
+            
+            // Update profile description
+            profileDescription.innerHTML = `<strong>Your Risk Profile: ${riskProfile}</strong><br>${description}<br><br>Your Risk Score: ${averageRiskScore.toFixed(1)} out of 100`;
+            
+            // Calculate allocations based on interests and risk profile
+            calculateAllocations(averageRiskScore);
+            
+            // Create chart
+            createAllocationChart();
+            
+            // Generate recommendations
+            generateRecommendations(riskProfile);
+        }
+
+        // Calculate suggested allocations
+        function calculateAllocations(riskScore) {
+            // Adjust allocations based on risk score and interest levels
+            const totalInterest = investmentOptions.reduce((sum, option) => sum + option.interest, 0);
+            
+            investmentOptions.forEach(option => {
+                // Base calculation on interest level
+                let baseAllocation = option.interest / totalInterest * 100;
+                
+                // Adjust based on risk profile preference and option risk level
+                const riskDifference = Math.abs(riskScore - option.riskLevel);
+                const riskAdjustment = 1 - (riskDifference / 100) * 0.5;
+                
+                option.allocation = baseAllocation * riskAdjustment;
+            });
+            
+            // Normalize to ensure total is 100%
+            const totalAllocation = investmentOptions.reduce((sum, option) => sum + option.allocation, 0);
+            investmentOptions.forEach(option => {
+                option.allocation = (option.allocation / totalAllocation) * 100;
+            });
+        }
+
+        // Create allocation chart
+        function createAllocationChart() {
+            const ctx = document.getElementById('allocation-chart').getContext('2d');
+            
+            // Destroy previous chart if it exists
+            if (allocationChart) {
+                allocationChart.destroy();
+            }
+            
+            // Sort by allocation for better visualization
+            const sortedOptions = [...investmentOptions].sort((a, b) => b.allocation - a.allocation);
+            
+            allocationChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedOptions.map(option => option.name),
+                    datasets: [{
+                        label: 'Recommended Allocation (%)',
+                        data: sortedOptions.map(option => option.allocation.toFixed(1)),
+                        backgroundColor: sortedOptions.map(option => option.color),
+                        borderColor: sortedOptions.map(option => option.color),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 30,
+                            title: {
+                                display: true,
+                                text: 'Allocation Percentage (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Generate investment recommendations
+        function generateRecommendations(riskProfile) {
+            let recommendationsHTML = '<h3>Investment Recommendations</h3>';
+            
+            // Get top 3 allocated options
+            const topOptions = [...investmentOptions]
+                .sort((a, b) => b.allocation - a.allocation)
+                .slice(0, 3);
+            
+            recommendationsHTML += '<p>Based on your risk profile, consider focusing on these investment types:</p>';
+            recommendationsHTML += '<ul>';
+            
+            topOptions.forEach(option => {
+                recommendationsHTML += `<li><strong>${option.name} (${option.allocation.toFixed(1)}%)</strong>: ${option.description}</li>`;
+            });
+            
+            recommendationsHTML += '</ul>';
+            
+            // Add general advice based on risk profile
+            recommendationsHTML += '<h3>General Strategy</h3>';
+            
+            switch(riskProfile) {
+                case 'Conservative':
+                    recommendationsHTML += '<p>Focus on capital preservation with steady income. Consider building an emergency fund equivalent to 3-6 months of expenses in high-yield savings accounts before investing. Ensure you have adequate insurance coverage.</p>';
+                    break;
+                case 'Moderate-Conservative':
+                    recommendationsHTML += '<p>Aim for a balanced approach with a tilt toward safer investments. Consider a core-satellite approach with the core in index funds and bonds, and smaller allocations to individual stocks or sector ETFs.</p>';
+                    break;
+                case 'Moderate':
+                    recommendationsHTML += '<p>Maintain diversification across asset classes. Consider automatic rebalancing strategies to maintain your desired allocation. Look into dollar-cost averaging for more volatile investments.</p>';
+                    break;
+                case 'Moderate-Aggressive':
+                    recommendationsHTML += '<p>Emphasize growth assets while maintaining some defensive positions. Consider sector rotation strategies and potentially allocate a small portion to alternative investments like REITs or commodities.</p>';
+                    break;
+                case 'Aggressive':
+                    recommendationsHTML += '<p>Focus on maximizing long-term growth. Consider emerging markets, small-cap stocks, and sector-specific ETFs. Remember to maintain a small cash position for opportunities during market downturns.</p>';
+                    break;
+            }
+            
+            recommendationsHTML += '<p><em>Note: This assessment is for educational purposes only. Please consult with a qualified financial advisor before making investment decisions.</em></p>';
+            
+            recommendations.innerHTML = recommendationsHTML;
+        }
+
+        // Initialize
+        createNodes();
     </script>
-
-
-    <div class="parallax"></div>
-    <div class="content">
-        <h1>Piața de capital</h1>
-        <p>Locul unde sunt vandute si cumparate instrumente financiare</p>
-    <p>Reglementata de <a href="https://www.asfromania.ro/ro/c/20/supraveghere" target="_blank">ASF</a></p>
-    </div>
-    <div class="parallax"></div>
-<!-- create js alert -->
- <script>
-    alert("mesaj")
- </script>
-
 </body>
 </html>
