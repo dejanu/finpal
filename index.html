@@ -33,12 +33,38 @@
     </style>
 </head>
 <body>
-    <div class="parallax"></div>
+
     <div class="content">
-        <h1>Investitor?</h1>
-        <p>Deții o sumă de bani pe care intenționezi să o plasezi pe piața de capital, prin cumpărarea de instrumente financiare</p>
+        <h1 id="typewriter"></h1>
+        <p id="typewriter-desc"></p>
     </div>
-    <div class="parallax"></div>
+    <script>
+        const titleText = "💲Investitor?";
+        const descText = "Deții o sumă de bani pe care intenționezi să o plasezi pe piața de capital, prin cumpărarea de instrumente financiare";
+        const titleElem = document.getElementById("typewriter");
+        const descElem = document.getElementById("typewriter-desc");
+
+        function typeWriter(text, elem, delay = 60, callback) {
+            let i = 0;
+            function typing() {
+                if (i < text.length) {
+                    elem.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typing, delay);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            typing();
+        }
+
+        typeWriter(titleText, titleElem, 80, () => {
+            setTimeout(() => {
+                typeWriter(descText, descElem, 30);
+            }, 400);
+        });
+    </script>
+
 
     <div class="parallax"></div>
     <div class="content">
