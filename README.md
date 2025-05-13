@@ -1,0 +1,2 @@
+# finpal
+Project repo
