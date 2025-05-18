@@ -1,1289 +1,1381 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investment Risk Profile Calculator</title>
-<script src="https://cdn.tailwindcss.com/3.4.16"></script>
-<script>tailwind.config={theme:{extend:{colors:{primary:'#3b82f6',secondary:'#64748b'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
-<style>
-:where([class^="ri-"])::before { content: "\f3c2"; }
-body {
-font-family: 'Inter', sans-serif;
-background-color: #fafafa;
-}
-.investment-block {
-cursor: move;
-transition: all 0.2s ease;
-user-select: none;
-}
-.investment-block:hover {
-transform: translateY(-5px);
-box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-}
-.investment-area {
-background-image: linear-gradient(to right, rgba(229, 231, 235, 0.5) 1px, transparent 1px),
-linear-gradient(to bottom, rgba(229, 231, 235, 0.5) 1px, transparent 1px);
-background-size: 50px 50px;
-}
-.resizable {
-position: relative;
-}
-.resize-handle {
-position: absolute;
-width: 20px;
-height: 20px;
-background-color: rgba(59, 130, 246, 0.5);
-border-radius: 50%;
-bottom: -10px;
-right: -10px;
-cursor: nwse-resize;
-}
-input[type="range"] {
--webkit-appearance: none;
-width: 100%;
-height: 6px;
-background: #e5e7eb;
-border-radius: 5px;
-outline: none;
-}
-input[type="range"]::-webkit-slider-thumb {
--webkit-appearance: none;
-width: 20px;
-height: 20px;
-background: #3b82f6;
-border-radius: 50%;
-cursor: pointer;
-}
-input[type="range"]::-moz-range-thumb {
-width: 20px;
-height: 20px;
-background: #3b82f6;
-border-radius: 50%;
-cursor: pointer;
-border: none;
-}
-.switch {
-position: relative;
-display: inline-block;
-width: 50px;
-height: 24px;
-}
-.switch input {
-opacity: 0;
-width: 0;
-height: 0;
-}
-.slider {
-position: absolute;
-cursor: pointer;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background-color: #e5e7eb;
-transition: .4s;
-border-radius: 24px;
-}
-.slider:before {
-position: absolute;
-content: "";
-height: 18px;
-width: 18px;
-left: 3px;
-bottom: 3px;
-background-color: white;
-transition: .4s;
-border-radius: 50%;
-}
-input:checked + .slider {
-background-color: #3b82f6;
-}
-input:checked + .slider:before {
-transform: translateX(26px);
-}
-.custom-radio {
-display: inline-flex;
-align-items: center;
-cursor: pointer;
-}
-.custom-radio input[type="radio"] {
-display: none;
-}
-.radio-mark {
-display: inline-block;
-width: 20px;
-height: 20px;
-border-radius: 50%;
-border: 2px solid #d1d5db;
-margin-right: 8px;
-position: relative;
-}
-.custom-radio input[type="radio"]:checked + .radio-mark {
-border-color: #3b82f6;
-}
-.custom-radio input[type="radio"]:checked + .radio-mark:after {
-content: "";
-position: absolute;
-width: 10px;
-height: 10px;
-background: #3b82f6;
-border-radius: 50%;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-}
-.custom-checkbox {
-display: inline-flex;
-align-items: center;
-cursor: pointer;
-}
-.custom-checkbox input[type="checkbox"] {
-display: none;
-}
-.checkbox-mark {
-display: inline-block;
-width: 20px;
-height: 20px;
-border-radius: 4px;
-border: 2px solid #d1d5db;
-margin-right: 8px;
-position: relative;
-}
-.custom-checkbox input[type="checkbox"]:checked + .checkbox-mark {
-background: #3b82f6;
-border-color: #3b82f6;
-}
-.custom-checkbox input[type="checkbox"]:checked + .checkbox-mark:after {
-content: "";
-position: absolute;
-width: 5px;
-height: 10px;
-border: solid white;
-border-width: 0 2px 2px 0;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -60%) rotate(45deg);
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Risk Profile Calculator</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: '#3b82f6', secondary: '#64748b' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+  <style>
+    :where([class^="ri-"])::before {
+      content: "\f3c2";
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafafa;
+    }
+
+    .investment-block {
+      cursor: move;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .investment-block:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .investment-area {
+      background-image: linear-gradient(to right, rgba(229, 231, 235, 0.5) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(229, 231, 235, 0.5) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .resizable {
+      position: relative;
+    }
+
+    .resize-handle {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: rgba(59, 130, 246, 0.5);
+      border-radius: 50%;
+      bottom: -10px;
+      right: -10px;
+      cursor: nwse-resize;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #3b82f6;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #3b82f6;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #e5e7eb;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.slider {
+      background-color: #3b82f6;
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(26px);
+    }
+
+    .custom-radio {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .custom-radio input[type="radio"] {
+      display: none;
+    }
+
+    .radio-mark {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      margin-right: 8px;
+      position: relative;
+    }
+
+    .custom-radio input[type="radio"]:checked+.radio-mark {
+      border-color: #3b82f6;
+    }
+
+    .custom-radio input[type="radio"]:checked+.radio-mark:after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #3b82f6;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .custom-checkbox {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkbox-mark {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid #d1d5db;
+      margin-right: 8px;
+      position: relative;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked+.checkbox-mark {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    .custom-checkbox input[type="checkbox"]:checked+.checkbox-mark:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%) rotate(45deg);
+    }
+  </style>
 </head>
+
 <body>
-<header class="bg-white shadow-sm">
-<div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
-<div class="flex items-center">
-<h1 class="text-2xl font-['Pacifico'] text-primary mr-2">logo</h1>
-<span class="text-gray-600 text-sm">Investment Risk Profile</span>
-</div>
-<nav class="flex items-center space-x-6">
-<a href="#" class="text-gray-700 hover:text-primary font-medium">Home</a>
-<a href="#" class="text-gray-700 hover:text-primary font-medium">Learn</a>
-<a href="#" class="text-gray-700 hover:text-primary font-medium">About</a>
-<button class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Get Started</button>
-</nav>
-</div>
-</header>
-<main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-<section class="mb-12">
-<div class="text-center mb-10">
-<h2 class="text-3xl font-bold text-gray-900 mb-4">Build Your Investment Portfolio</h2>
-<p class="text-gray-600 max-w-3xl mx-auto">Drag and resize investment instruments to create your ideal portfolio. We'll analyze your choices and provide a personalized risk profile assessment.</p>
-</div>
-<div class="bg-white rounded-lg shadow-md p-6 mb-8">
-<div class="flex items-center justify-between mb-6">
-<h3 class="text-xl font-semibold text-gray-800">Monthly Investment Amount</h3>
-<div class="flex items-center space-x-4">
-<input type="number" id="investment-amount" class="w-32 px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-right" value="1000">
-<select id="currency-selector" class="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
-<option value="USD">USD</option>
-<option value="EUR">EUR</option>
-<option value="GBP">GBP</option>
-</select>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="low" data-type="bonds" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary">
-<i class="ri-bank-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Government Bonds</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Low Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Stable, low-risk government debt securities with predictable returns.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 2-4%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="medium-low" data-type="corporate-bonds" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-full text-green-600">
-<i class="ri-building-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Corporate Bonds</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-green-100 text-green-800">Medium-Low Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Debt securities issued by corporations with higher yields than government bonds.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 3-6%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="medium" data-type="index-funds" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full text-purple-600">
-<i class="ri-line-chart-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Index Funds</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-purple-100 text-purple-800">Medium Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Funds that track market indices like S&P 500, offering broad market exposure.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 7-10%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="medium-high" data-type="blue-chip" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600">
-<i class="ri-stock-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Blue-Chip Stocks</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">Medium-High Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Shares of well-established, financially sound companies with reliable performance.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 8-12%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="high" data-type="growth-stocks" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-orange-100 rounded-full text-orange-600">
-<i class="ri-rocket-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Growth Stocks</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-orange-100 text-orange-800">High Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Shares in companies expected to grow at an above-average rate relative to the market.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 10-15%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="very-high" data-type="crypto" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full text-red-600">
-<i class="ri-bit-coin-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Cryptocurrency</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-red-100 text-red-800">Very High Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Digital or virtual currencies that use cryptography for security and operate independently.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: -30% to +100%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="medium" data-type="reits" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-teal-100 rounded-full text-teal-600">
-<i class="ri-home-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">REITs</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-teal-100 text-teal-800">Medium Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Real Estate Investment Trusts that own, operate or finance income-producing properties.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 5-8%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-<div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col" data-risk="high" data-type="commodities" draggable="true">
-<div class="flex items-center mb-3">
-<div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-600">
-<i class="ri-copper-coin-line ri-lg"></i>
-</div>
-<div class="ml-3">
-<h4 class="font-medium text-gray-900">Commodities</h4>
-<div class="flex items-center mt-1">
-<span class="text-xs font-medium px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">High Risk</span>
-</div>
-</div>
-</div>
-<p class="text-sm text-gray-600 mb-3">Raw materials or primary agricultural products that can be bought and sold.</p>
-<div class="mt-auto flex justify-between items-center">
-<span class="text-xs text-gray-500">Avg. Return: 2-15%</span>
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">View Details</button>
-</div>
-</div>
-</div>
-<div class="mb-6">
-<h3 class="text-xl font-semibold text-gray-800 mb-4">Your Investment Allocation</h3>
-<div id="investment-area" class="investment-area border-2 border-dashed border-gray-300 rounded-lg h-96 p-4 flex flex-wrap gap-4 relative">
-<div class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none">
-<div class="text-center">
-<div class="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full mb-2">
-<i class="ri-drag-move-line ri-2x"></i>
-</div>
-<p>Drag and drop investment instruments here</p>
-<p class="text-sm mt-2">Resize them to adjust allocation percentages</p>
-</div>
-</div>
-</div>
-</div>
-<div class="flex flex-wrap items-center justify-between bg-gray-50 p-4 rounded-lg">
-<div class="flex items-center space-x-6">
-<div>
-<span class="block text-sm text-gray-500">Total Allocated</span>
-<span id="total-allocated" class="text-xl font-semibold text-gray-900">0%</span>
-</div>
-<div>
-<span class="block text-sm text-gray-500">Remaining</span>
-<span id="remaining-allocation" class="text-xl font-semibold text-gray-900">100%</span>
-</div>
-</div>
-<div class="flex space-x-3 mt-4 sm:mt-0">
-<button id="reset-allocation" class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Reset</button>
-<button id="calculate-profile" class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Calculate Risk Profile</button>
-</div>
-</div>
-</div>
-</section>
-<section id="risk-profile-section" class="mb-12 hidden">
-<div class="bg-white rounded-lg shadow-md p-6">
-<h3 class="text-2xl font-bold text-gray-900 mb-6">Your Investment Risk Profile</h3>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-<div class="col-span-1">
-<div class="bg-gray-50 rounded-lg p-6">
-<h4 class="text-lg font-semibold text-gray-800 mb-4">Risk Assessment</h4>
-<div class="mb-6">
-<div id="risk-meter-container" class="h-48 mb-4"></div>
-<div class="text-center">
-<span id="risk-profile-type" class="text-xl font-bold text-primary">Moderate</span>
-<p class="text-gray-600 mt-2">Your investment choices indicate a balanced approach to risk and return.</p>
-</div>
-</div>
-<div class="space-y-3">
-<div class="flex justify-between items-center">
-<span class="text-sm text-gray-600">Risk Tolerance</span>
-<span class="text-sm font-medium">Medium</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-sm text-gray-600">Expected Annual Return</span>
-<span class="text-sm font-medium">7.5%</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-sm text-gray-600">Volatility</span>
-<span class="text-sm font-medium">Medium</span>
-</div>
-</div>
-</div>
-</div>
-<div class="col-span-1">
-<div class="bg-gray-50 rounded-lg p-6 h-full">
-<h4 class="text-lg font-semibold text-gray-800 mb-4">Your Allocation</h4>
-<div id="allocation-chart-container" class="h-48 mb-4"></div>
-<div class="space-y-2 mt-4">
-<div class="flex items-center">
-<span class="w-3 h-3 bg-[rgba(87,181,231,1)] rounded-full mr-2"></span>
-<span class="text-sm text-gray-700">Government Bonds - 20%</span>
-</div>
-<div class="flex items-center">
-<span class="w-3 h-3 bg-[rgba(141,211,199,1)] rounded-full mr-2"></span>
-<span class="text-sm text-gray-700">Index Funds - 40%</span>
-</div>
-<div class="flex items-center">
-<span class="w-3 h-3 bg-[rgba(251,191,114,1)] rounded-full mr-2"></span>
-<span class="text-sm text-gray-700">Blue-Chip Stocks - 30%</span>
-</div>
-<div class="flex items-center">
-<span class="w-3 h-3 bg-[rgba(252,141,98,1)] rounded-full mr-2"></span>
-<span class="text-sm text-gray-700">Growth Stocks - 10%</span>
-</div>
-</div>
-</div>
-</div>
-<div class="col-span-1">
-<div class="bg-gray-50 rounded-lg p-6">
-<h4 class="text-lg font-semibold text-gray-800 mb-4">Recommendations</h4>
-<div class="space-y-4">
-<div>
-<h5 class="font-medium text-gray-800">Portfolio Balance</h5>
-<p class="text-sm text-gray-600 mt-1">Your portfolio has a good balance between growth and stability. Consider increasing bond allocation slightly for more stability.</p>
-</div>
-<div>
-<h5 class="font-medium text-gray-800">Diversification</h5>
-<p class="text-sm text-gray-600 mt-1">Good diversification across asset classes. Consider adding REITs for real estate exposure.</p>
-</div>
-<div>
-<h5 class="font-medium text-gray-800">Time Horizon</h5>
-<p class="text-sm text-gray-600 mt-1">Your allocation is suitable for a medium to long-term investment horizon (5-10 years).</p>
-</div>
-<div class="pt-2">
-<button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Get detailed recommendations →</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section id="historical-performance-section" class="mb-12 hidden">
-<div class="bg-white rounded-lg shadow-md p-6">
-<h3 class="text-2xl font-bold text-gray-900 mb-6">Historical Performance Simulation</h3>
-<div class="flex flex-col lg:flex-row gap-6 mb-6">
-<div class="w-full lg:w-1/4">
-<div class="bg-gray-50 rounded-lg p-6">
-<h4 class="text-lg font-semibold text-gray-800 mb-4">Simulation Settings</h4>
-<div class="space-y-4">
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Investment Amount</label>
-<div class="flex items-center">
-<span class="text-gray-500 mr-2">$</span>
-<input type="number" id="simulation-amount" class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" value="1000">
-</div>
-<p class="text-xs text-gray-500 mt-1">Monthly investment</p>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Time Period</label>
-<select id="time-period" class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
-<option value="1">1 Year</option>
-<option value="3">3 Years</option>
-<option value="5" selected>5 Years</option>
-<option value="10">10 Years</option>
-</select>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-1">Reinvest Dividends</label>
-<label class="switch">
-<input type="checkbox" checked>
-<span class="slider"></span>
-</label>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">Display Options</label>
-<div class="space-y-2">
-<label class="custom-radio">
-<input type="radio" name="chart-type" value="line" checked>
-<span class="radio-mark"></span>
-<span>Line Chart</span>
-</label>
-<label class="custom-radio">
-<input type="radio" name="chart-type" value="bar">
-<span class="radio-mark"></span>
-<span>Bar Chart</span>
-</label>
-</div>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700 mb-2">Compare With</label>
-<div class="space-y-2">
-<label class="custom-checkbox">
-<input type="checkbox" checked>
-<span class="checkbox-mark"></span>
-<span>S&P 500</span>
-</label>
-<label class="custom-checkbox">
-<input type="checkbox">
-<span class="checkbox-mark"></span>
-<span>Treasury Bonds</span>
-</label>
-</div>
-</div>
-<button id="update-simulation" class="w-full bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Update Simulation</button>
-</div>
-</div>
-</div>
-<div class="w-full lg:w-3/4">
-<div class="bg-gray-50 rounded-lg p-6 h-full">
-<div class="flex justify-between items-center mb-6">
-<h4 class="text-lg font-semibold text-gray-800">Performance Over Time</h4>
-<div class="flex items-center space-x-2 text-sm">
-<span class="flex items-center">
-<span class="w-3 h-3 bg-[rgba(87,181,231,1)] rounded-full mr-1"></span>
-<span>Your Portfolio</span>
-</span>
-<span class="flex items-center">
-<span class="w-3 h-3 bg-[rgba(141,211,199,1)] rounded-full mr-1"></span>
-<span>S&P 500</span>
-</span>
-</div>
-</div>
-<div id="performance-chart-container" class="h-80"></div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-<div class="bg-white p-3 rounded-md shadow-sm">
-<span class="text-xs text-gray-500">Total Invested</span>
-<div class="text-lg font-semibold text-gray-900">$60,000</div>
-</div>
-<div class="bg-white p-3 rounded-md shadow-sm">
-<span class="text-xs text-gray-500">Current Value</span>
-<div class="text-lg font-semibold text-green-600">$78,450</div>
-</div>
-<div class="bg-white p-3 rounded-md shadow-sm">
-<span class="text-xs text-gray-500">Total Gain</span>
-<div class="text-lg font-semibold text-green-600">$18,450</div>
-</div>
-<div class="bg-white p-3 rounded-md shadow-sm">
-<span class="text-xs text-gray-500">Annualized Return</span>
-<div class="text-lg font-semibold text-gray-900">7.8%</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-gray-50 rounded-lg p-6">
-<h4 class="text-lg font-semibold text-gray-800 mb-4">Investment Breakdown</h4>
-<div class="overflow-x-auto">
-<table class="min-w-full divide-y divide-gray-200">
-<thead>
-<tr>
-<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Investment Type</th>
-<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Allocation</th>
-<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Amount</th>
-<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">5-Year Return</th>
-<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Value</th>
-<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recommendation</th>
-</tr>
-</thead>
-<tbody id="investment-breakdown-body" class="bg-white divide-y divide-gray-200">
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-</main>
-<footer class="bg-gray-900 text-white">
-<div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-<div class="col-span-1 md:col-span-1">
-<h1 class="text-2xl font-['Pacifico'] text-white mb-4">logo</h1>
-<p class="text-gray-400 text-sm">Helping you build a smarter investment portfolio tailored to your risk profile.</p>
-<div class="flex space-x-4 mt-6">
-<a href="#" class="text-gray-400 hover:text-white">
-<div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
-<i class="ri-twitter-x-line"></i>
-</div>
-</a>
-<a href="#" class="text-gray-400 hover:text-white">
-<div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
-<i class="ri-linkedin-line"></i>
-</div>
-</a>
-<a href="#" class="text-gray-400 hover:text-white">
-<div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
-<i class="ri-facebook-line"></i>
-</div>
-</a>
-<a href="#" class="text-gray-400 hover:text-white">
-<div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
-<i class="ri-instagram-line"></i>
-</div>
-</a>
-</div>
-</div>
-<div class="col-span-1">
-<h3 class="text-lg font-semibold mb-4">Resources</h3>
-<ul class="space-y-2">
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Investment Guide</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Risk Assessment</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Market Research</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Financial Planning</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Retirement Calculator</a></li>
-</ul>
-</div>
-<div class="col-span-1">
-<h3 class="text-lg font-semibold mb-4">Company</h3>
-<ul class="space-y-2">
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">About Us</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Careers</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Press</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Contact</a></li>
-<li><a href="#" class="text-gray-400 hover:text-white text-sm">Partners</a></li>
-</ul>
-</div>
-<div class="col-span-1">
-<h3 class="text-lg font-semibold mb-4">Stay Updated</h3>
-<p class="text-gray-400 text-sm mb-4">Subscribe to our newsletter for the latest investment insights.</p>
-<form class="space-y-2">
-<div class="flex">
-<input type="email" placeholder="Your email address" class="px-4 py-2 rounded-l-button w-full bg-gray-800 border-none text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary">
-<button type="submit" class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap">Subscribe</button>
-</div>
-</form>
-<div class="mt-6">
-<div class="flex items-center space-x-2">
-<div class="w-6 h-6 flex items-center justify-center">
-<i class="ri-shield-check-line text-primary"></i>
-</div>
-<span class="text-gray-400 text-xs">Your data is secure with us</span>
-</div>
-</div>
-</div>
-</div>
-<div class="border-t border-gray-800 mt-12 pt-8">
-<div class="flex flex-col md:flex-row justify-between items-center">
-<p class="text-gray-400 text-sm">© 2025 Investment Risk Profile. All rights reserved.</p>
-<div class="flex space-x-6 mt-4 md:mt-0">
-<a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
-<a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a>
-<a href="#" class="text-gray-400 hover:text-white text-sm">Cookie Policy</a>
-</div>
-</div>
-</div>
-</div>
-</footer>
-<!-- Investment Details Modal -->
-<div id="investment-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-<div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-<div class="p-6">
-<div class="flex justify-between items-start mb-4">
-<div class="flex items-center">
-<div id="modal-icon" class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-primary mr-3">
-<i class="ri-bank-line ri-lg"></i>
-</div>
-<div>
-<h3 id="modal-title" class="text-xl font-bold text-gray-900">Government Bonds</h3>
-<div class="flex items-center mt-1">
-<span id="modal-risk" class="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Low Risk</span>
-</div>
-</div>
-</div>
-<button id="close-modal" class="text-gray-400 hover:text-gray-500">
-<div class="w-8 h-8 flex items-center justify-center">
-<i class="ri-close-line ri-lg"></i>
-</div>
-</button>
-</div>
-<div class="space-y-6">
-<div>
-<h4 class="text-lg font-semibold text-gray-800 mb-2">Description</h4>
-<p id="modal-description" class="text-gray-600">Government bonds are debt securities issued by a government to support government spending and obligations. They generally include a commitment to pay periodic interest, called coupon payments, and to repay the face value on the maturity date. They are considered among the safest investments as they are backed by the full faith and credit of the issuing government.</p>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-<div class="bg-gray-50 p-4 rounded-lg">
-<h5 class="font-medium text-gray-800 mb-2">Risk Level</h5>
-<div class="flex items-center">
-<div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-<div id="modal-risk-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 20%"></div>
-</div>
-<span id="modal-risk-percentage" class="text-sm font-medium">20%</span>
-</div>
-<p class="text-xs text-gray-500 mt-2">Lower risk typically means lower returns</p>
-</div>
-<div class="bg-gray-50 p-4 rounded-lg">
-<h5 class="font-medium text-gray-800 mb-2">Expected Return</h5>
-<p id="modal-return" class="text-xl font-bold text-gray-900">2-4% <span class="text-sm font-normal text-gray-500">per year</span></p>
-<p class="text-xs text-gray-500 mt-2">Based on historical performance</p>
-</div>
-<div class="bg-gray-50 p-4 rounded-lg">
-<h5 class="font-medium text-gray-800 mb-2">Liquidity</h5>
-<p id="modal-liquidity" class="text-xl font-bold text-gray-900">High</p>
-<p class="text-xs text-gray-500 mt-2">Can be sold quickly with minimal loss</p>
-</div>
-</div>
-<div>
-<h4 class="text-lg font-semibold text-gray-800 mb-2">Historical Performance</h4>
-<div id="modal-chart-container" class="h-64"></div>
-</div>
-<div>
-<h4 class="text-lg font-semibold text-gray-800 mb-2">Recommended For</h4>
-<ul id="modal-recommendations" class="list-disc pl-5 text-gray-600 space-y-1">
-<li>Conservative investors seeking capital preservation</li>
-<li>Retirees needing stable income</li>
-<li>Short-term investment goals (1-3 years)</li>
-<li>Portfolio diversification to reduce overall risk</li>
-</ul>
-</div>
-<div>
-<h4 class="text-lg font-semibold text-gray-800 mb-2">How to Invest</h4>
-<p id="modal-how-to" class="text-gray-600 mb-3">You can invest in government bonds through:</p>
-<ul class="list-disc pl-5 text-gray-600 space-y-1">
-<li>Treasury Direct (U.S. Treasury bonds)</li>
-<li>Bond ETFs like Vanguard Total Bond Market ETF (BND)</li>
-<li>Bond mutual funds</li>
-<li>Through a brokerage account</li>
-</ul>
-</div>
-<div class="pt-2">
-<button id="add-to-portfolio" class="bg-primary text-white px-6 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Add to Portfolio</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-// Initialize charts
-const riskMeterChart = echarts.init(document.getElementById('risk-meter-container'));
-const allocationChart = echarts.init(document.getElementById('allocation-chart-container'));
-const performanceChart = echarts.init(document.getElementById('performance-chart-container'));
-const modalChart = echarts.init(document.getElementById('modal-chart-container'));
-// Risk Meter Chart Option
-const riskMeterOption = {
-animation: false,
-series: [{
-type: 'gauge',
-startAngle: 180,
-endAngle: 0,
-min: 0,
-max: 100,
-radius: '100%',
-axisLine: {
-lineStyle: {
-width: 30,
-color: [
-[0.25, 'rgba(87, 181, 231, 1)'],
-[0.5, 'rgba(141, 211, 199, 1)'],
-[0.75, 'rgba(251, 191, 114, 1)'],
-[1, 'rgba(252, 141, 98, 1)']
-]
-}
-},
-pointer: {
-icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
-length: '12%',
-width: 20,
-offsetCenter: [0, '-60%'],
-itemStyle: {
-color: '#1f2937'
-}
-},
-axisTick: {
-length: 12,
-lineStyle: {
-color: 'auto',
-width: 2
-}
-},
-splitLine: {
-length: 20,
-lineStyle: {
-color: 'auto',
-width: 3
-}
-},
-axisLabel: {
-color: '#1f2937',
-fontSize: 12,
-distance: -60,
-formatter: function(value) {
-if (value === 0) return 'Low';
-if (value === 50) return 'Medium';
-if (value === 100) return 'High';
-return '';
-}
-},
-title: {
-offsetCenter: [0, '-20%'],
-fontSize: 14,
-color: '#1f2937'
-},
-detail: {
-fontSize: 16,
-offsetCenter: [0, '0%'],
-valueAnimation: true,
-formatter: function(value) {
-return 'Moderate';
-},
-color: '#1f2937'
-},
-data: [{
-value: 55,
-name: 'Risk Level'
-}]
-}]
-};
-// Allocation Chart Option
-const allocationOption = {
-animation: false,
-tooltip: {
-trigger: 'item',
-backgroundColor: 'rgba(255, 255, 255, 0.8)',
-borderColor: '#e5e7eb',
-textStyle: {
-color: '#1f2937'
-}
-},
-series: [{
-name: 'Allocation',
-type: 'pie',
-radius: ['40%', '70%'],
-avoidLabelOverlap: false,
-itemStyle: {
-borderRadius: 8,
-borderColor: '#fff',
-borderWidth: 2
-},
-label: {
-show: false
-},
-emphasis: {
-label: {
-show: false
-}
-},
-labelLine: {
-show: false
-},
-data: [
-{ value: 20, name: 'Government Bonds', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
-{ value: 40, name: 'Index Funds', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
-{ value: 30, name: 'Blue-Chip Stocks', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
-{ value: 10, name: 'Growth Stocks', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
-]
-}]
-};
-// Performance Chart Option
-const performanceOption = {
-animation: false,
-tooltip: {
-trigger: 'axis',
-backgroundColor: 'rgba(255, 255, 255, 0.8)',
-borderColor: '#e5e7eb',
-textStyle: {
-color: '#1f2937'
-}
-},
-legend: {
-data: ['Your Portfolio', 'S&P 500'],
-bottom: 0
-},
-grid: {
-left: 0,
-right: 0,
-top: 10,
-bottom: 30,
-containLabel: true
-},
-xAxis: {
-type: 'category',
-boundaryGap: false,
-data: ['2020-05', '2020-11', '2021-05', '2021-11', '2022-05', '2022-11', '2023-05', '2023-11', '2024-05', '2025-05'],
-axisLine: {
-lineStyle: {
-color: '#e5e7eb'
-}
-},
-axisLabel: {
-color: '#1f2937'
-}
-},
-yAxis: {
-type: 'value',
-axisLine: {
-show: false
-},
-axisLabel: {
-color: '#1f2937',
-formatter: '${value}k'
-},
-splitLine: {
-lineStyle: {
-color: '#e5e7eb'
-}
-}
-},
-series: [
-{
-name: 'Your Portfolio',
-type: 'line',
-smooth: true,
-lineStyle: {
-width: 3,
-color: 'rgba(87, 181, 231, 1)'
-},
-areaStyle: {
-color: {
-type: 'linear',
-x: 0,
-y: 0,
-x2: 0,
-y2: 1,
-colorStops: [{
-offset: 0, color: 'rgba(87, 181, 231, 0.2)'
-}, {
-offset: 1, color: 'rgba(87, 181, 231, 0.01)'
-}]
-}
-},
-symbol: 'none',
-data: [12, 15, 20, 23, 28, 30, 38, 45, 55, 78]
-},
-{
-name: 'S&P 500',
-type: 'line',
-smooth: true,
-lineStyle: {
-width: 3,
-color: 'rgba(141, 211, 199, 1)'
-},
-areaStyle: {
-color: {
-type: 'linear',
-x: 0,
-y: 0,
-x2: 0,
-y2: 1,
-colorStops: [{
-offset: 0, color: 'rgba(141, 211, 199, 0.2)'
-}, {
-offset: 1, color: 'rgba(141, 211, 199, 0.01)'
-}]
-}
-},
-symbol: 'none',
-data: [12, 14, 18, 20, 25, 28, 35, 40, 48, 65]
-}
-]
-};
-// Modal Chart Option
-const modalChartOption = {
-animation: false,
-tooltip: {
-trigger: 'axis',
-backgroundColor: 'rgba(255, 255, 255, 0.8)',
-borderColor: '#e5e7eb',
-textStyle: {
-color: '#1f2937'
-}
-},
-grid: {
-left: 0,
-right: 0,
-top: 10,
-bottom: 30,
-containLabel: true
-},
-xAxis: {
-type: 'category',
-boundaryGap: false,
-data: ['2020', '2021', '2022', '2023', '2024', '2025'],
-axisLine: {
-lineStyle: {
-color: '#e5e7eb'
-}
-},
-axisLabel: {
-color: '#1f2937'
-}
-},
-yAxis: {
-type: 'value',
-axisLine: {
-show: false
-},
-axisLabel: {
-color: '#1f2937',
-formatter: '{value}%'
-},
-splitLine: {
-lineStyle: {
-color: '#e5e7eb'
-}
-}
-},
-series: [
-{
-name: 'Return',
-type: 'line',
-smooth: true,
-lineStyle: {
-width: 3,
-color: 'rgba(87, 181, 231, 1)'
-},
-areaStyle: {
-color: {
-type: 'linear',
-x: 0,
-y: 0,
-x2: 0,
-y2: 1,
-colorStops: [{
-offset: 0, color: 'rgba(87, 181, 231, 0.2)'
-}, {
-offset: 1, color: 'rgba(87, 181, 231, 0.01)'
-}]
-}
-},
-symbol: 'none',
-data: [2.1, 2.5, 3.2, 2.8, 3.5, 3.9]
-}
-]
-};
-// Render charts
-riskMeterChart.setOption(riskMeterOption);
-allocationChart.setOption(allocationOption);
-performanceChart.setOption(performanceOption);
-modalChart.setOption(modalChartOption);
-// Handle window resize
-window.addEventListener('resize', function() {
-riskMeterChart.resize();
-allocationChart.resize();
-performanceChart.resize();
-modalChart.resize();
-});
-// Investment blocks drag and drop functionality
-const investmentBlocks = document.querySelectorAll('.investment-block');
-const investmentArea = document.getElementById('investment-area');
-const calculateButton = document.getElementById('calculate-profile');
-const resetButton = document.getElementById('reset-allocation');
-const totalAllocated = document.getElementById('total-allocated');
-const remainingAllocation = document.getElementById('remaining-allocation');
-const riskProfileSection = document.getElementById('risk-profile-section');
-const historicalPerformanceSection = document.getElementById('historical-performance-section');
-let draggedItem = null;
-let clonedItems = [];
-investmentBlocks.forEach(block => {
-block.addEventListener('dragstart', function(e) {
-draggedItem = this;
-setTimeout(() => {
-this.style.opacity = '0.5';
-}, 0);
-});
-block.addEventListener('dragend', function() {
-this.style.opacity = '1';
-});
-// View details button click
-const viewDetailsBtn = block.querySelector('button');
-viewDetailsBtn.addEventListener('click', function() {
-openInvestmentModal(block.dataset.type);
-});
-});
-investmentArea.addEventListener('dragover', function(e) {
-e.preventDefault();
-this.classList.add('border-primary');
-});
-investmentArea.addEventListener('dragleave', function() {
-this.classList.remove('border-primary');
-});
-investmentArea.addEventListener('drop', function(e) {
-e.preventDefault();
-this.classList.remove('border-primary');
-// Check if we already have 4 instruments
-if (clonedItems.length >= 4) {
-  const notification = document.createElement('div');
-  notification.className = 'fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50';
-  notification.innerHTML = `
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div class="flex items-center">
+        <h1 class="text-2xl font-['Pacifico'] text-primary mr-2">logo</h1>
+        <span class="text-gray-600 text-sm">Profilul de risc al investițiilor</span>
+      </div>
+      <nav class="flex items-center space-x-6">
+        <a href="#" class="text-gray-700 hover:text-primary font-medium">Acasă</a>
+        <a href="#" class="text-gray-700 hover:text-primary font-medium">Învață</a>
+        <a href="#" class="text-gray-700 hover:text-primary font-medium">Despre</a>
+        <button
+          class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Începe
+          acum</button>
+      </nav>
+    </div>
+  </header>
+  <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <section class="mb-12">
+      <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">Construiește-ți Portofoliul de Investiții</h2>
+      <p class="text-gray-600 max-w-3xl mx-auto">Trage și redimensionează instrumentele de investiții pentru a-ți
+        crea portofoliul ideal. Vom analiza alegerile tale și vom oferi o evaluare personalizată a profilului de
+        risc.</p>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Suma Lunară de Investit</h3>
+        <div class="flex items-center space-x-4">
+        <input type="number" id="investment-amount"
+          class="w-32 px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-right"
+          value="1000">
+        <select id="currency-selector"
+          class="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+        </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="low" data-type="bonds" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary">
+          <i class="ri-bank-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Obligațiuni Guvernamentale</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Risc Scăzut</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Titluri de valoare guvernamentale stabile, cu risc scăzut și randamente
+          previzibile.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 2-4%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="medium-low" data-type="corporate-bonds" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-full text-green-600">
+          <i class="ri-building-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Obligațiuni Corporative</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-green-100 text-green-800">Risc Mediu-Scăzut</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Titluri de valoare emise de corporații, cu randamente mai mari decât
+          obligațiunile guvernamentale.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 3-6%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="medium" data-type="index-funds" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full text-purple-600">
+          <i class="ri-line-chart-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Fonduri Index</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-purple-100 text-purple-800">Risc Mediu</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Fonduri care urmăresc indici de piață precum S&P 500, oferind expunere
+          largă pe piață.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 7-10%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="medium-high" data-type="blue-chip" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600">
+          <i class="ri-stock-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Acțiuni Blue-Chip</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">Risc Mediu-Înalt</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Acțiuni ale unor companii bine stabilite, solide din punct de vedere
+          financiar, cu performanțe fiabile.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 8-12%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="high" data-type="growth-stocks" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-orange-100 rounded-full text-orange-600">
+          <i class="ri-rocket-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Acțiuni de Creștere</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-orange-100 text-orange-800">Risc Înalt</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Acțiuni ale unor companii așteptate să crească într-un ritm peste medie
+          în raport cu piața.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 10-15%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="very-high" data-type="crypto" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full text-red-600">
+          <i class="ri-bit-coin-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Criptomonede</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-red-100 text-red-800">Risc Foarte Înalt</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Monede digitale sau virtuale care utilizează criptografia pentru
+          securitate și funcționează independent.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: -30% până la +100%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="medium" data-type="reits" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-teal-100 rounded-full text-teal-600">
+          <i class="ri-home-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">REIT-uri</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-teal-100 text-teal-800">Risc Mediu</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Fonduri de Investiții Imobiliare care dețin, operează sau finanțează
+          proprietăți producătoare de venituri.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 5-8%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+        <div class="investment-block bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col"
+        data-risk="high" data-type="commodities" draggable="true">
+        <div class="flex items-center mb-3">
+          <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-600">
+          <i class="ri-copper-coin-line ri-lg"></i>
+          </div>
+          <div class="ml-3">
+          <h4 class="font-medium text-gray-900">Materii Prime</h4>
+          <div class="flex items-center mt-1">
+            <span class="text-xs font-medium px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">Risc Înalt</span>
+          </div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Materii prime sau produse agricole primare care pot fi cumpărate și
+          vândute.</p>
+        <div class="mt-auto flex justify-between items-center">
+          <span class="text-xs text-gray-500">Randament Mediu: 2-15%</span>
+          <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
+          Detalii</button>
+        </div>
+        </div>
+      </div>
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Alocarea Ta de Investiții</h3>
+        <div id="investment-area"
+        class="investment-area border-2 border-dashed border-gray-300 rounded-lg h-96 p-4 flex flex-wrap gap-4 relative">
+        <div class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none">
+          <div class="text-center">
+          <div class="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full mb-2">
+            <i class="ri-drag-move-line ri-2x"></i>
+          </div>
+          <p>Trage și plasează instrumente de investiții aici</p>
+          <p class="text-sm mt-2">Redimensionează-le pentru a ajusta procentele de alocare</p>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center justify-between bg-gray-50 p-4 rounded-lg">
+        <div class="flex items-center space-x-6">
+        <div>
+          <span class="block text-sm text-gray-500">Total Alocat</span>
+          <span id="total-allocated" class="text-xl font-semibold text-gray-900">0%</span>
+        </div>
+        <div>
+          <span class="block text-sm text-gray-500">Rămas</span>
+          <span id="remaining-allocation" class="text-xl font-semibold text-gray-900">100%</span>
+        </div>
+        </div>
+        <div class="flex space-x-3 mt-4 sm:mt-0">
+        <button id="reset-allocation"
+          class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Resetează</button>
+        <button id="calculate-profile"
+          class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Calculează
+          Profilul de Risc</button>
+        </div>
+      </div>
+      </div>
+    </section>
+    <section id="risk-profile-section" class="mb-12 hidden">
+      <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6">Profilul Tău de Risc al Investițiilor</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="col-span-1">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Evaluarea Riscului</h4>
+          <div class="mb-6">
+          <div id="risk-meter-container" class="h-48 mb-4"></div>
+          <div class="text-center">
+            <span id="risk-profile-type" class="text-xl font-bold text-primary">Moderat</span>
+            <p class="text-gray-600 mt-2">Alegerile tale de investiții indică o abordare echilibrată a riscului și
+            a randamentului.</p>
+          </div>
+          </div>
+          <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Toleranța la Risc</span>
+            <span class="text-sm font-medium">Medie</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Randament Anual Așteptat</span>
+            <span class="text-sm font-medium">7.5%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">Volatilitate</span>
+            <span class="text-sm font-medium">Medie</span>
+          </div>
+          </div>
+        </div>
+        </div>
+        <div class="col-span-1">
+        <div class="bg-gray-50 rounded-lg p-6 h-full">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Alocarea Ta</h4>
+          <div id="allocation-chart-container" class="h-48 mb-4"></div>
+          <div class="space-y-2 mt-4">
+          <div class="flex items-center">
+            <span class="w-3 h-3 bg-[rgba(87,181,231,1)] rounded-full mr-2"></span>
+            <span class="text-sm text-gray-700">Obligațiuni Guvernamentale - 20%</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-3 h-3 bg-[rgba(141,211,199,1)] rounded-full mr-2"></span>
+            <span class="text-sm text-gray-700">Fonduri Index - 40%</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-3 h-3 bg-[rgba(251,191,114,1)] rounded-full mr-2"></span>
+            <span class="text-sm text-gray-700">Acțiuni Blue-Chip - 30%</span>
+          </div>
+          <div class="flex items-center">
+            <span class="w-3 h-3 bg-[rgba(252,141,98,1)] rounded-full mr-2"></span>
+            <span class="text-sm text-gray-700">Acțiuni de Creștere - 10%</span>
+          </div>
+          </div>
+        </div>
+        </div>
+        <div class="col-span-1">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Recomandări</h4>
+          <div class="space-y-4">
+          <div>
+            <h5 class="font-medium text-gray-800">Echilibrul Portofoliului</h5>
+            <p class="text-sm text-gray-600 mt-1">Portofoliul tău are un echilibru bun între creștere și stabilitate.
+            Ia în considerare creșterea ușoară a alocării de obligațiuni pentru mai multă stabilitate.</p>
+          </div>
+          <div>
+            <h5 class="font-medium text-gray-800">Diversificare</h5>
+            <p class="text-sm text-gray-600 mt-1">Diversificare bună între clasele de active. Ia în considerare
+            adăugarea de REIT-uri pentru expunere imobiliară.</p>
+          </div>
+          <div>
+            <h5 class="font-medium text-gray-800">Orizont de Timp</h5>
+            <p class="text-sm text-gray-600 mt-1">Alocarea ta este potrivită pentru un orizont de investiții pe termen
+            mediu până la lung (5-10 ani).</p>
+          </div>
+          <div class="pt-2">
+            <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Obține
+            recomandări detaliate →</button>
+          </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      </div>
+    </section>
+    <section id="historical-performance-section" class="mb-12 hidden">
+      <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6">Simularea Performanței Istorice</h3>
+      <div class="flex flex-col lg:flex-row gap-6 mb-6">
+        <div class="w-full lg:w-1/4">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Setări Simulare</h4>
+          <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Suma Investită</label>
+            <div class="flex items-center">
+            <span class="text-gray-500 mr-2">$</span>
+            <input type="number" id="simulation-amount"
+              class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              value="1000">
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Investiție lunară</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Perioada de Timp</label>
+            <select id="time-period"
+            class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+            <option value="1">1 An</option>
+            <option value="3">3 Ani</option>
+            <option value="5" selected>5 Ani</option>
+            <option value="10">10 Ani</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Reinvestește Dividendele</label>
+            <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+            </label>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Opțiuni de Afișare</label>
+            <div class="space-y-2">
+            <label class="custom-radio">
+              <input type="radio" name="chart-type" value="line" checked>
+              <span class="radio-mark"></span>
+              <span>Grafic Linii</span>
+            </label>
+            <label class="custom-radio">
+              <input type="radio" name="chart-type" value="bar">
+              <span class="radio-mark"></span>
+              <span>Grafic Bare</span>
+            </label>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Compară Cu</label>
+            <div class="space-y-2">
+            <label class="custom-checkbox">
+              <input type="checkbox" checked>
+              <span class="checkbox-mark"></span>
+              <span>S&P 500</span>
+            </label>
+            <label class="custom-checkbox">
+              <input type="checkbox">
+              <span class="checkbox-mark"></span>
+              <span>Obligațiuni de Stat</span>
+            </label>
+            </div>
+          </div>
+          <button id="update-simulation"
+            class="w-full bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Actualizează
+            Simularea</button>
+          </div>
+        </div>
+        </div>
+        <div class="w-full lg:w-3/4">
+        <div class="bg-gray-50 rounded-lg p-6 h-full">
+          <div class="flex justify-between items-center mb-6">
+          <h4 class="text-lg font-semibold text-gray-800">Performanța de-a Lungul Timpului</h4>
+          <div class="flex items-center space-x-2 text-sm">
+            <span class="flex items-center">
+            <span class="w-3 h-3 bg-[rgba(87,181,231,1)] rounded-full mr-1"></span>
+            <span>Portofoliul Tău</span>
+            </span>
+            <span class="flex items-center">
+            <span class="w-3 h-3 bg-[rgba(141,211,199,1)] rounded-full mr-1"></span>
+            <span>S&P 500</span>
+            </span>
+          </div>
+          </div>
+          <div id="performance-chart-container" class="h-80"></div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div class="bg-white p-3 rounded-md shadow-sm">
+            <span class="text-xs text-gray-500">Total Investit</span>
+            <div class="text-lg font-semibold text-gray-900">$60,000</div>
+          </div>
+          <div class="bg-white p-3 rounded-md shadow-sm">
+            <span class="text-xs text-gray-500">Valoare Curentă</span>
+            <div class="text-lg font-semibold text-green-600">$78,450</div>
+          </div>
+          <div class="bg-white p-3 rounded-md shadow-sm">
+            <span class="text-xs text-gray-500">Câștig Total</span>
+            <div class="text-lg font-semibold text-green-600">$18,450</div>
+          </div>
+          <div class="bg-white p-3 rounded-md shadow-sm">
+            <span class="text-xs text-gray-500">Randament Anualizat</span>
+            <div class="text-lg font-semibold text-gray-900">7.8%</div>
+          </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-6">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Defalcarea Investițiilor</h4>
+        <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipul
+            Investiției</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alocare
+            </th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Suma
+            Lunară</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Randament
+            pe 5 Ani</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valoare
+            Curentă</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Recomandare</th>
+          </tr>
+          </thead>
+          <tbody id="investment-breakdown-body" class="bg-white divide-y divide-gray-200">
+          </tbody>
+        </table>
+        </div>
+      </div>
+      </div>
+    </section>
+  </main>
+  <footer class="bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="col-span-1 md:col-span-1">
+          <h1 class="text-2xl font-['Pacifico'] text-white mb-4">logo</h1>
+          <p class="text-gray-400 text-sm">Helping you build a smarter investment portfolio tailored to your risk
+            profile.</p>
+          <div class="flex space-x-4 mt-6">
+            <a href="#" class="text-gray-400 hover:text-white">
+              <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
+                <i class="ri-twitter-x-line"></i>
+              </div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
+                <i class="ri-linkedin-line"></i>
+              </div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
+                <i class="ri-facebook-line"></i>
+              </div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white">
+              <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800">
+                <i class="ri-instagram-line"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="col-span-1">
+          <h3 class="text-lg font-semibold mb-4">Resources</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Investment Guide</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Risk Assessment</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Market Research</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Financial Planning</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Retirement Calculator</a></li>
+          </ul>
+        </div>
+        <div class="col-span-1">
+          <h3 class="text-lg font-semibold mb-4">Company</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">About Us</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Careers</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Press</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Contact</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white text-sm">Partners</a></li>
+          </ul>
+        </div>
+        <div class="col-span-1">
+          <h3 class="text-lg font-semibold mb-4">Stay Updated</h3>
+          <p class="text-gray-400 text-sm mb-4">Subscribe to our newsletter for the latest investment insights.</p>
+          <form class="space-y-2">
+            <div class="flex">
+              <input type="email" placeholder="Your email address"
+                class="px-4 py-2 rounded-l-button w-full bg-gray-800 border-none text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+              <button type="submit"
+                class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap">Subscribe</button>
+            </div>
+          </form>
+          <div class="mt-6">
+            <div class="flex items-center space-x-2">
+              <div class="w-6 h-6 flex items-center justify-center">
+                <i class="ri-shield-check-line text-primary"></i>
+              </div>
+              <span class="text-gray-400 text-xs">Your data is secure with us</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-12 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">© 2025 Investment Risk Profile. All rights reserved.</p>
+          <div class="flex space-x-6 mt-4 md:mt-0">
+            <a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
+            <a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a>
+            <a href="#" class="text-gray-400 hover:text-white text-sm">Cookie Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- Investment Details Modal -->
+  <div id="investment-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex items-center">
+            <div id="modal-icon"
+              class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-primary mr-3">
+              <i class="ri-bank-line ri-lg"></i>
+            </div>
+            <div>
+              <h3 id="modal-title" class="text-xl font-bold text-gray-900">Obligațiuni Guvernamentale</h3>
+              <div class="flex items-center mt-1">
+                <span id="modal-risk" class="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Risc
+                  Scăzut</span>
+              </div>
+            </div>
+          </div>
+          <button id="close-modal" class="text-gray-400 hover:text-gray-500">
+            <div class="w-8 h-8 flex items-center justify-center">
+              <i class="ri-close-line ri-lg"></i>
+            </div>
+          </button>
+        </div>
+        <div class="space-y-6">
+          <div>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Descriere</h4>
+            <p id="modal-description" class="text-gray-600">Obligațiunile guvernamentale sunt titluri de datorie emise de
+              un guvern pentru a sprijini cheltuielile și obligațiile guvernamentale. Acestea includ, în general, un
+              angajament de a plăti dobânzi periodice, numite plăți de cupon, și de a rambursa valoarea nominală la data
+              scadenței. Ele sunt considerate printre cele mai sigure investiții, deoarece sunt susținute de încrederea
+              deplină a guvernului emitent.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h5 class="font-medium text-gray-800 mb-2">Nivelul de Risc</h5>
+              <div class="flex items-center">
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
+                  <div id="modal-risk-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 20%"></div>
+                </div>
+                <span id="modal-risk-percentage" class="text-sm font-medium">20%</span>
+              </div>
+              <p class="text-xs text-gray-500 mt-2">Un risc mai scăzut înseamnă, de obicei, randamente mai mici</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h5 class="font-medium text-gray-800 mb-2">Randament Așteptat</h5>
+              <p id="modal-return" class="text-xl font-bold text-gray-900">2-4% <span
+                  class="text-sm font-normal text-gray-500">pe an</span></p>
+              <p class="text-xs text-gray-500 mt-2">Pe baza performanței istorice</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h5 class="font-medium text-gray-800 mb-2">Lichiditate</h5>
+              <p id="modal-liquidity" class="text-xl font-bold text-gray-900">Ridicată</p>
+              <p class="text-xs text-gray-500 mt-2">Pot fi vândute rapid, cu pierderi minime</p>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Performanța Istorică</h4>
+            <div id="modal-chart-container" class="h-64"></div>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Recomandat Pentru</h4>
+            <ul id="modal-recommendations" class="list-disc pl-5 text-gray-600 space-y-1">
+              <li>Investitori conservatori care caută conservarea capitalului</li>
+              <li>Pensionari care au nevoie de venituri stabile</li>
+              <li>Obiective de investiții pe termen scurt (1-3 ani)</li>
+              <li>Diversificarea portofoliului pentru a reduce riscul general</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-gray-800 mb-2">Cum să Investești</h4>
+            <p id="modal-how-to" class="text-gray-600 mb-3">Poți investi în obligațiuni guvernamentale prin:</p>
+            <ul class="list-disc pl-5 text-gray-600 space-y-1">
+              <li>Treasury Direct (obligațiuni ale Trezoreriei SUA)</li>
+              <li>ETF-uri de obligațiuni, cum ar fi Vanguard Total Bond Market ETF (BND)</li>
+              <li>Fonduri mutuale de obligațiuni</li>
+              <li>Printr-un cont de brokeraj</li>
+            </ul>
+          </div>
+          <div class="pt-2">
+            <button id="add-to-portfolio"
+              class="bg-primary text-white px-6 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Adaugă
+              în Portofoliu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize charts
+      const riskMeterChart = echarts.init(document.getElementById('risk-meter-container'));
+      const allocationChart = echarts.init(document.getElementById('allocation-chart-container'));
+      const performanceChart = echarts.init(document.getElementById('performance-chart-container'));
+      const modalChart = echarts.init(document.getElementById('modal-chart-container'));
+      // Risk Meter Chart Option
+      const riskMeterOption = {
+        animation: false,
+        series: [{
+          type: 'gauge',
+          startAngle: 180,
+          endAngle: 0,
+          min: 0,
+          max: 100,
+          radius: '100%',
+          axisLine: {
+            lineStyle: {
+              width: 30,
+              color: [
+                [0.25, 'rgba(87, 181, 231, 1)'],
+                [0.5, 'rgba(141, 211, 199, 1)'],
+                [0.75, 'rgba(251, 191, 114, 1)'],
+                [1, 'rgba(252, 141, 98, 1)']
+              ]
+            }
+          },
+          pointer: {
+            icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+            length: '12%',
+            width: 20,
+            offsetCenter: [0, '-60%'],
+            itemStyle: {
+              color: '#1f2937'
+            }
+          },
+          axisTick: {
+            length: 12,
+            lineStyle: {
+              color: 'auto',
+              width: 2
+            }
+          },
+          splitLine: {
+            length: 20,
+            lineStyle: {
+              color: 'auto',
+              width: 3
+            }
+          },
+          axisLabel: {
+            color: '#1f2937',
+            fontSize: 12,
+            distance: -60,
+            formatter: function (value) {
+              if (value === 0) return 'Low';
+              if (value === 50) return 'Medium';
+              if (value === 100) return 'High';
+              return '';
+            }
+          },
+          title: {
+            offsetCenter: [0, '-20%'],
+            fontSize: 14,
+            color: '#1f2937'
+          },
+          detail: {
+            fontSize: 16,
+            offsetCenter: [0, '0%'],
+            valueAnimation: true,
+            formatter: function (value) {
+              return 'Moderate';
+            },
+            color: '#1f2937'
+          },
+          data: [{
+            value: 55,
+            name: 'Risk Level'
+          }]
+        }]
+      };
+      // Allocation Chart Option
+      const allocationOption = {
+        animation: false,
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderColor: '#e5e7eb',
+          textStyle: {
+            color: '#1f2937'
+          }
+        },
+        series: [{
+          name: 'Allocation',
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 8,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false
+          },
+          emphasis: {
+            label: {
+              show: false
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: [
+            { value: 20, name: 'Government Bonds', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+            { value: 40, name: 'Index Funds', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+            { value: 30, name: 'Blue-Chip Stocks', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+            { value: 10, name: 'Growth Stocks', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
+          ]
+        }]
+      };
+      // Performance Chart Option
+      const performanceOption = {
+        animation: false,
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderColor: '#e5e7eb',
+          textStyle: {
+            color: '#1f2937'
+          }
+        },
+        legend: {
+          data: ['Your Portfolio', 'S&P 500'],
+          bottom: 0
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: 10,
+          bottom: 30,
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['2020-05', '2020-11', '2021-05', '2021-11', '2022-05', '2022-11', '2023-05', '2023-11', '2024-05', '2025-05'],
+          axisLine: {
+            lineStyle: {
+              color: '#e5e7eb'
+            }
+          },
+          axisLabel: {
+            color: '#1f2937'
+          }
+        },
+        yAxis: {
+          type: 'value',
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            color: '#1f2937',
+            formatter: '${value}k'
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#e5e7eb'
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Your Portfolio',
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              width: 3,
+              color: 'rgba(87, 181, 231, 1)'
+            },
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0, color: 'rgba(87, 181, 231, 0.2)'
+                }, {
+                  offset: 1, color: 'rgba(87, 181, 231, 0.01)'
+                }]
+              }
+            },
+            symbol: 'none',
+            data: [12, 15, 20, 23, 28, 30, 38, 45, 55, 78]
+          },
+          {
+            name: 'S&P 500',
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              width: 3,
+              color: 'rgba(141, 211, 199, 1)'
+            },
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0, color: 'rgba(141, 211, 199, 0.2)'
+                }, {
+                  offset: 1, color: 'rgba(141, 211, 199, 0.01)'
+                }]
+              }
+            },
+            symbol: 'none',
+            data: [12, 14, 18, 20, 25, 28, 35, 40, 48, 65]
+          }
+        ]
+      };
+      // Modal Chart Option
+      const modalChartOption = {
+        animation: false,
+        tooltip: {
+          trigger: 'axis',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          borderColor: '#e5e7eb',
+          textStyle: {
+            color: '#1f2937'
+          }
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: 10,
+          bottom: 30,
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['2020', '2021', '2022', '2023', '2024', '2025'],
+          axisLine: {
+            lineStyle: {
+              color: '#e5e7eb'
+            }
+          },
+          axisLabel: {
+            color: '#1f2937'
+          }
+        },
+        yAxis: {
+          type: 'value',
+          axisLine: {
+            show: false
+          },
+          axisLabel: {
+            color: '#1f2937',
+            formatter: '{value}%'
+          },
+          splitLine: {
+            lineStyle: {
+              color: '#e5e7eb'
+            }
+          }
+        },
+        series: [
+          {
+            name: 'Return',
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              width: 3,
+              color: 'rgba(87, 181, 231, 1)'
+            },
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
+                  offset: 0, color: 'rgba(87, 181, 231, 0.2)'
+                }, {
+                  offset: 1, color: 'rgba(87, 181, 231, 0.01)'
+                }]
+              }
+            },
+            symbol: 'none',
+            data: [2.1, 2.5, 3.2, 2.8, 3.5, 3.9]
+          }
+        ]
+      };
+      // Render charts
+      riskMeterChart.setOption(riskMeterOption);
+      allocationChart.setOption(allocationOption);
+      performanceChart.setOption(performanceOption);
+      modalChart.setOption(modalChartOption);
+      // Handle window resize
+      window.addEventListener('resize', function () {
+        riskMeterChart.resize();
+        allocationChart.resize();
+        performanceChart.resize();
+        modalChart.resize();
+      });
+      // Investment blocks drag and drop functionality
+      const investmentBlocks = document.querySelectorAll('.investment-block');
+      const investmentArea = document.getElementById('investment-area');
+      const calculateButton = document.getElementById('calculate-profile');
+      const resetButton = document.getElementById('reset-allocation');
+      const totalAllocated = document.getElementById('total-allocated');
+      const remainingAllocation = document.getElementById('remaining-allocation');
+      const riskProfileSection = document.getElementById('risk-profile-section');
+      const historicalPerformanceSection = document.getElementById('historical-performance-section');
+      let draggedItem = null;
+      let clonedItems = [];
+      investmentBlocks.forEach(block => {
+        block.addEventListener('dragstart', function (e) {
+          draggedItem = this;
+          setTimeout(() => {
+            this.style.opacity = '0.5';
+          }, 0);
+        });
+        block.addEventListener('dragend', function () {
+          this.style.opacity = '1';
+        });
+        // View details button click
+        const viewDetailsBtn = block.querySelector('button');
+        viewDetailsBtn.addEventListener('click', function () {
+          openInvestmentModal(block.dataset.type);
+        });
+      });
+      investmentArea.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        this.classList.add('border-primary');
+      });
+      investmentArea.addEventListener('dragleave', function () {
+        this.classList.remove('border-primary');
+      });
+      investmentArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.classList.remove('border-primary');
+        // Check if we already have 4 instruments
+        if (clonedItems.length >= 4) {
+          const notification = document.createElement('div');
+          notification.className = 'fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50';
+          notification.innerHTML = `
     <div class="flex items-center">
       <i class="ri-error-warning-line mr-2"></i>
       <span>Maximum 4 instruments allowed</span>
     </div>
   `;
-  document.body.appendChild(notification);
-  setTimeout(() => notification.remove(), 3000);
-  return;
-}
-if (draggedItem) {
-// Clone the dragged item
-const clone = draggedItem.cloneNode(true);
-clone.classList.add('resizable');
-clone.style.opacity = '1';
-clone.style.position = 'relative';
-// Calculate initial width based on number of items
-const numItems = clonedItems.length;
-const initialPercentage = numItems === 0 ? 100 : Math.round(100 / (numItems + 1));
-const containerWidth = investmentArea.clientWidth - 32; // Subtract padding
-const initialWidth = (containerWidth * initialPercentage / 100);
-clone.style.width = initialWidth + 'px';
-// Add resize handle
-const resizeHandle = document.createElement('div');
-resizeHandle.classList.add('resize-handle');
-clone.appendChild(resizeHandle);
-// Update all items to fill the container width
-const updateItemWidths = () => {
-  const containerWidth = investmentArea.clientWidth - 32;
-  clonedItems.forEach(item => {
-    const percentage = parseInt(item.querySelector('div.absolute.top-2.right-2').textContent);
-    item.style.width = (containerWidth * percentage / 100) + 'px';
-  });
-};
-// Add percentage display
-const percentageDisplay = document.createElement('div');
-percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
-percentageDisplay.textContent = initialPercentage + '%';
-clone.appendChild(percentageDisplay);
-// Add view details functionality to the clone
-const viewDetailsBtn = clone.querySelector('button');
-viewDetailsBtn.addEventListener('click', function() {
-openInvestmentModal(clone.dataset.type);
-});
-// Add remove button
-const removeButton = document.createElement('button');
-removeButton.classList.add('absolute', 'top-2', 'left-2', 'bg-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'hover:text-red-500', 'shadow-sm');
-removeButton.innerHTML = '<i class="ri-close-line"></i>';
-removeButton.addEventListener('click', function() {
-clone.remove();
-clonedItems = clonedItems.filter(item => item !== clone);
-updateAllocation();
-});
-clone.appendChild(removeButton);
-// Add the clone to the investment area
-this.appendChild(clone);
-clonedItems.push(clone);
-// Make the clone resizable
-let isResizing = false;
-resizeHandle.addEventListener('mousedown', function(e) {
-isResizing = true;
-e.preventDefault();
-});
-document.addEventListener('mousemove', function(e) {
-if (!isResizing) return;
-const containerWidth = investmentArea.clientWidth - 32;
-const rect = investmentArea.getBoundingClientRect();
-const relativeX = e.clientX - rect.left;
-const percentage = Math.min(100, Math.max(5, Math.round((relativeX / containerWidth) * 100)));
-// Update current item
-clone.style.width = (containerWidth * percentage / 100) + 'px';
-const percentageDisplay = clone.querySelector('div.absolute.top-2.right-2');
-percentageDisplay.textContent = percentage + '%';
-// Adjust other items proportionally
-const otherItems = clonedItems.filter(item => item !== clone);
-const remainingPercentage = 100 - percentage;
-if (otherItems.length > 0) {
-  const percentagePerItem = Math.round(remainingPercentage / otherItems.length);
-  otherItems.forEach(item => {
-    const itemDisplay = item.querySelector('div.absolute.top-2.right-2');
-    itemDisplay.textContent = percentagePerItem + '%';
-    item.style.width = (containerWidth * percentagePerItem / 100) + 'px';
-  });
-}
-updateAllocation();
-});
-document.addEventListener('mouseup', function() {
-isResizing = false;
-});
-updateAllocation();
-}
-draggedItem = null;
-});
-// Update allocation percentages
-function updateAllocation() {
-let total = 0;
-const items = [...clonedItems];
-const containerWidth = investmentArea.clientWidth - 32;
-// Calculate total percentage
-items.forEach(item => {
-  const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-  if (percentageDisplay) {
-    const percentage = parseInt(percentageDisplay.textContent);
-    if (!isNaN(percentage)) {
-      total += percentage;
-    }
-  }
-});
-// If there's only one item, set it to 100%
-if (items.length === 1) {
-const percentageDisplay = items[0].querySelector('div.absolute.top-2.right-2');
-percentageDisplay.textContent = '100%';
-items[0].style.width = '400px';
-total = 100;
-}
-// If total exceeds 100%, adjust all proportionally
-else if (total > 100) {
-const scale = 100 / total;
-items.forEach(item => {
-const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-const currentPercentage = parseInt(percentageDisplay.textContent);
-const newPercentage = Math.round(currentPercentage * scale);
-percentageDisplay.textContent = newPercentage + '%';
-// Update width based on new percentage
-const newWidth = 150 + ((400 - 150) * newPercentage / 100);
-item.style.width = newWidth + 'px';
-});
-total = 100;
-}
-// If total is less than 100%, distribute remaining evenly
-else if (total < 100 && items.length > 0) {
-const remaining = 100 - total;
-const addPerItem = Math.round(remaining / items.length);
-items.forEach(item => {
-const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-const currentPercentage = parseInt(percentageDisplay.textContent);
-const newPercentage = currentPercentage + addPerItem;
-percentageDisplay.textContent = newPercentage + '%';
-// Update width based on new percentage
-const newWidth = 150 + ((400 - 150) * newPercentage / 100);
-item.style.width = newWidth + 'px';
-});
-total = 100;
-}
-totalAllocated.textContent = total + '%';
-remainingAllocation.textContent = (100 - total) + '%';
-totalAllocated.classList.remove('text-red-600');
-remainingAllocation.classList.remove('text-red-600');
-}
-// Reset allocation
-resetButton.addEventListener('click', function() {
-clonedItems.forEach(item => item.remove());
-clonedItems = [];
-updateAllocation();
-riskProfileSection.classList.add('hidden');
-historicalPerformanceSection.classList.add('hidden');
-});
-// Calculate risk profile
-calculateButton.addEventListener('click', function() {
-if (clonedItems.length === 0) {
-alert('Please add at least one investment instrument to your portfolio.');
-return;
-}
-const total = parseInt(totalAllocated.textContent);
-if (total !== 100) {
-alert('Your total allocation should be 100%. Current allocation: ' + total + '%');
-return;
-}
-// Update Investment Breakdown table
-const investmentAmount = parseFloat(document.getElementById('investment-amount').value) || 1000;
-const breakdownBody = document.getElementById('investment-breakdown-body');
-breakdownBody.innerHTML = '';
-clonedItems.forEach(item => {
-const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-const percentage = parseInt(percentageDisplay.textContent);
-const monthlyAmount = (investmentAmount * percentage / 100).toFixed(2);
-const fiveYearReturn = (Math.random() * 30 + 20).toFixed(1); // Random return between 20-50%
-const currentValue = (monthlyAmount * 60 * (1 + fiveYearReturn/100)).toFixed(2);
-const investmentType = item.dataset.type;
-const iconClass = getIconClassForType(investmentType);
-const iconBgClass = getIconBgClassForType(investmentType);
-const iconColorClass = getIconColorClassForType(investmentType);
-const recommendedETF = getRecommendedETFForType(investmentType);
-const displayName = item.querySelector('h4').textContent;
-breakdownBody.innerHTML += `
+          document.body.appendChild(notification);
+          setTimeout(() => notification.remove(), 3000);
+          return;
+        }
+        if (draggedItem) {
+          // Clone the dragged item
+          const clone = draggedItem.cloneNode(true);
+          clone.classList.add('resizable');
+          clone.style.opacity = '1';
+          clone.style.position = 'relative';
+          // Calculate initial width based on number of items
+          const numItems = clonedItems.length;
+          const initialPercentage = numItems === 0 ? 100 : Math.round(100 / (numItems + 1));
+          const containerWidth = investmentArea.clientWidth - 32; // Subtract padding
+          const initialWidth = (containerWidth * initialPercentage / 100);
+          clone.style.width = initialWidth + 'px';
+          // Add resize handle
+          const resizeHandle = document.createElement('div');
+          resizeHandle.classList.add('resize-handle');
+          clone.appendChild(resizeHandle);
+          // Update all items to fill the container width
+          const updateItemWidths = () => {
+            const containerWidth = investmentArea.clientWidth - 32;
+            clonedItems.forEach(item => {
+              const percentage = parseInt(item.querySelector('div.absolute.top-2.right-2').textContent);
+              item.style.width = (containerWidth * percentage / 100) + 'px';
+            });
+          };
+          // Add percentage display
+          const percentageDisplay = document.createElement('div');
+          percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
+          percentageDisplay.textContent = initialPercentage + '%';
+          clone.appendChild(percentageDisplay);
+          // Add view details functionality to the clone
+          const viewDetailsBtn = clone.querySelector('button');
+          viewDetailsBtn.addEventListener('click', function () {
+            openInvestmentModal(clone.dataset.type);
+          });
+          // Add remove button
+          const removeButton = document.createElement('button');
+          removeButton.classList.add('absolute', 'top-2', 'left-2', 'bg-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'hover:text-red-500', 'shadow-sm');
+          removeButton.innerHTML = '<i class="ri-close-line"></i>';
+          removeButton.addEventListener('click', function () {
+            clone.remove();
+            clonedItems = clonedItems.filter(item => item !== clone);
+            updateAllocation();
+          });
+          clone.appendChild(removeButton);
+          // Add the clone to the investment area
+          this.appendChild(clone);
+          clonedItems.push(clone);
+          // Make the clone resizable
+          let isResizing = false;
+          resizeHandle.addEventListener('mousedown', function (e) {
+            isResizing = true;
+            e.preventDefault();
+          });
+          document.addEventListener('mousemove', function (e) {
+            if (!isResizing) return;
+            const containerWidth = investmentArea.clientWidth - 32;
+            const rect = investmentArea.getBoundingClientRect();
+            const relativeX = e.clientX - rect.left;
+            const percentage = Math.min(100, Math.max(5, Math.round((relativeX / containerWidth) * 100)));
+            // Update current item
+            clone.style.width = (containerWidth * percentage / 100) + 'px';
+            const percentageDisplay = clone.querySelector('div.absolute.top-2.right-2');
+            percentageDisplay.textContent = percentage + '%';
+            // Adjust other items proportionally
+            const otherItems = clonedItems.filter(item => item !== clone);
+            const remainingPercentage = 100 - percentage;
+            if (otherItems.length > 0) {
+              const percentagePerItem = Math.round(remainingPercentage / otherItems.length);
+              otherItems.forEach(item => {
+                const itemDisplay = item.querySelector('div.absolute.top-2.right-2');
+                itemDisplay.textContent = percentagePerItem + '%';
+                item.style.width = (containerWidth * percentagePerItem / 100) + 'px';
+              });
+            }
+            updateAllocation();
+          });
+          document.addEventListener('mouseup', function () {
+            isResizing = false;
+          });
+          updateAllocation();
+        }
+        draggedItem = null;
+      });
+      // Update allocation percentages
+      function updateAllocation() {
+        let total = 0;
+        const items = [...clonedItems];
+        const containerWidth = investmentArea.clientWidth - 32;
+        // Calculate total percentage
+        items.forEach(item => {
+          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          if (percentageDisplay) {
+            const percentage = parseInt(percentageDisplay.textContent);
+            if (!isNaN(percentage)) {
+              total += percentage;
+            }
+          }
+        });
+        // If there's only one item, set it to 100%
+        if (items.length === 1) {
+          const percentageDisplay = items[0].querySelector('div.absolute.top-2.right-2');
+          percentageDisplay.textContent = '100%';
+          items[0].style.width = '400px';
+          total = 100;
+        }
+        // If total exceeds 100%, adjust all proportionally
+        else if (total > 100) {
+          const scale = 100 / total;
+          items.forEach(item => {
+            const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+            const currentPercentage = parseInt(percentageDisplay.textContent);
+            const newPercentage = Math.round(currentPercentage * scale);
+            percentageDisplay.textContent = newPercentage + '%';
+            // Update width based on new percentage
+            const newWidth = 150 + ((400 - 150) * newPercentage / 100);
+            item.style.width = newWidth + 'px';
+          });
+          total = 100;
+        }
+        // If total is less than 100%, distribute remaining evenly
+        else if (total < 100 && items.length > 0) {
+          const remaining = 100 - total;
+          const addPerItem = Math.round(remaining / items.length);
+          items.forEach(item => {
+            const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+            const currentPercentage = parseInt(percentageDisplay.textContent);
+            const newPercentage = currentPercentage + addPerItem;
+            percentageDisplay.textContent = newPercentage + '%';
+            // Update width based on new percentage
+            const newWidth = 150 + ((400 - 150) * newPercentage / 100);
+            item.style.width = newWidth + 'px';
+          });
+          total = 100;
+        }
+        totalAllocated.textContent = total + '%';
+        remainingAllocation.textContent = (100 - total) + '%';
+        totalAllocated.classList.remove('text-red-600');
+        remainingAllocation.classList.remove('text-red-600');
+      }
+      // Reset allocation
+      resetButton.addEventListener('click', function () {
+        clonedItems.forEach(item => item.remove());
+        clonedItems = [];
+        updateAllocation();
+        riskProfileSection.classList.add('hidden');
+        historicalPerformanceSection.classList.add('hidden');
+      });
+      // Calculate risk profile
+      calculateButton.addEventListener('click', function () {
+        if (clonedItems.length === 0) {
+          alert('Please add at least one investment instrument to your portfolio.');
+          return;
+        }
+        const total = parseInt(totalAllocated.textContent);
+        if (total !== 100) {
+          alert('Your total allocation should be 100%. Current allocation: ' + total + '%');
+          return;
+        }
+        // Update Investment Breakdown table
+        const investmentAmount = parseFloat(document.getElementById('investment-amount').value) || 1000;
+        const breakdownBody = document.getElementById('investment-breakdown-body');
+        breakdownBody.innerHTML = '';
+        clonedItems.forEach(item => {
+          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          const percentage = parseInt(percentageDisplay.textContent);
+          const monthlyAmount = (investmentAmount * percentage / 100).toFixed(2);
+          const fiveYearReturn = (Math.random() * 30 + 20).toFixed(1); // Random return between 20-50%
+          const currentValue = (monthlyAmount * 60 * (1 + fiveYearReturn / 100)).toFixed(2);
+          const investmentType = item.dataset.type;
+          const iconClass = getIconClassForType(investmentType);
+          const iconBgClass = getIconBgClassForType(investmentType);
+          const iconColorClass = getIconColorClassForType(investmentType);
+          const recommendedETF = getRecommendedETFForType(investmentType);
+          const displayName = item.querySelector('h4').textContent;
+          breakdownBody.innerHTML += `
 <tr>
 <td class="px-4 py-4 whitespace-nowrap">
 <div class="flex items-center">
@@ -1301,540 +1393,541 @@ breakdownBody.innerHTML += `
 <span class="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-800">${recommendedETF}</span>
 </td>
 </tr>`;
-});
-// Helper functions for Investment Breakdown
-function getIconClassForType(type) {
-const icons = {
-'bonds': 'ri-bank-line',
-'corporate-bonds': 'ri-building-line',
-'index-funds': 'ri-line-chart-line',
-'blue-chip': 'ri-stock-line',
-'growth-stocks': 'ri-rocket-line',
-'crypto': 'ri-bit-coin-line',
-'reits': 'ri-home-line',
-'commodities': 'ri-copper-coin-line'
-};
-return icons[type] || 'ri-question-line';
-}
-function getIconBgClassForType(type) {
-const bgColors = {
-'bonds': 'bg-blue-100',
-'corporate-bonds': 'bg-green-100',
-'index-funds': 'bg-purple-100',
-'blue-chip': 'bg-indigo-100',
-'growth-stocks': 'bg-orange-100',
-'crypto': 'bg-red-100',
-'reits': 'bg-teal-100',
-'commodities': 'bg-yellow-100'
-};
-return bgColors[type] || 'bg-gray-100';
-}
-function getIconColorClassForType(type) {
-const textColors = {
-'bonds': 'text-primary',
-'corporate-bonds': 'text-green-600',
-'index-funds': 'text-purple-600',
-'blue-chip': 'text-indigo-600',
-'growth-stocks': 'text-orange-600',
-'crypto': 'text-red-600',
-'reits': 'text-teal-600',
-'commodities': 'text-yellow-600'
-};
-return textColors[type] || 'text-gray-600';
-}
-function getRecommendedETFForType(type) {
-const etfs = {
-'bonds': 'Vanguard Total Bond ETF',
-'corporate-bonds': 'iShares Corporate Bond ETF',
-'index-funds': 'Vanguard S&P 500 ETF',
-'blue-chip': 'iShares Dow Jones ETF',
-'growth-stocks': 'ARK Innovation ETF',
-'crypto': 'ProShares Bitcoin ETF',
-'reits': 'Vanguard Real Estate ETF',
-'commodities': 'iShares Commodity ETF'
-};
-return etfs[type] || 'Recommended ETF';
-}
-// Calculate risk profile based on selected investments
-let totalRisk = 0;
-const allocations = [];
-const riskWeights = {
-'bonds': 1,
-'corporate-bonds': 2,
-'index-funds': 3,
-'blue-chip': 4,
-'growth-stocks': 5,
-'crypto': 6,
-'reits': 3,
-'commodities': 5
-};
-clonedItems.forEach(item => {
-const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-const percentage = parseInt(percentageDisplay.textContent);
-const investmentType = item.dataset.type;
-const riskWeight = riskWeights[investmentType];
-totalRisk += (riskWeight * percentage) / 100;
-// Store allocation for pie chart
-allocations.push({
-value: percentage,
-name: item.querySelector('h4').textContent,
-itemStyle: {
-color: getColorForInvestmentType(investmentType)
-}
-});
-});
-// Update risk meter
-const riskMeterChart = echarts.getInstanceByDom(document.getElementById('risk-meter-container'));
-riskMeterChart.setOption({
-series: [{
-data: [{
-value: totalRisk * 16.67, // Convert to 0-100 scale
-name: 'Risk Level'
-}]
-}]
-});
-// Update risk profile type text
-const riskProfileType = document.getElementById('risk-profile-type');
-if (totalRisk < 2) {
-riskProfileType.textContent = 'Conservative';
-} else if (totalRisk < 3) {
-riskProfileType.textContent = 'Moderate-Conservative';
-} else if (totalRisk < 4) {
-riskProfileType.textContent = 'Moderate';
-} else if (totalRisk < 5) {
-riskProfileType.textContent = 'Moderate-Aggressive';
-} else {
-riskProfileType.textContent = 'Aggressive';
-}
-// Update allocation chart
-const allocationChart = echarts.getInstanceByDom(document.getElementById('allocation-chart-container'));
-allocationChart.setOption({
-series: [{
-data: allocations
-}]
-});
-// Update allocation text display
-const allocationList = document.querySelector('#risk-profile-section .space-y-2.mt-4');
-allocationList.innerHTML = allocations.map(allocation => `
+        });
+        // Helper functions for Investment Breakdown
+        function getIconClassForType(type) {
+          const icons = {
+            'bonds': 'ri-bank-line',
+            'corporate-bonds': 'ri-building-line',
+            'index-funds': 'ri-line-chart-line',
+            'blue-chip': 'ri-stock-line',
+            'growth-stocks': 'ri-rocket-line',
+            'crypto': 'ri-bit-coin-line',
+            'reits': 'ri-home-line',
+            'commodities': 'ri-copper-coin-line'
+          };
+          return icons[type] || 'ri-question-line';
+        }
+        function getIconBgClassForType(type) {
+          const bgColors = {
+            'bonds': 'bg-blue-100',
+            'corporate-bonds': 'bg-green-100',
+            'index-funds': 'bg-purple-100',
+            'blue-chip': 'bg-indigo-100',
+            'growth-stocks': 'bg-orange-100',
+            'crypto': 'bg-red-100',
+            'reits': 'bg-teal-100',
+            'commodities': 'bg-yellow-100'
+          };
+          return bgColors[type] || 'bg-gray-100';
+        }
+        function getIconColorClassForType(type) {
+          const textColors = {
+            'bonds': 'text-primary',
+            'corporate-bonds': 'text-green-600',
+            'index-funds': 'text-purple-600',
+            'blue-chip': 'text-indigo-600',
+            'growth-stocks': 'text-orange-600',
+            'crypto': 'text-red-600',
+            'reits': 'text-teal-600',
+            'commodities': 'text-yellow-600'
+          };
+          return textColors[type] || 'text-gray-600';
+        }
+        function getRecommendedETFForType(type) {
+          const etfs = {
+            'bonds': 'Vanguard Total Bond ETF',
+            'corporate-bonds': 'iShares Corporate Bond ETF',
+            'index-funds': 'Vanguard S&P 500 ETF',
+            'blue-chip': 'iShares Dow Jones ETF',
+            'growth-stocks': 'ARK Innovation ETF',
+            'crypto': 'ProShares Bitcoin ETF',
+            'reits': 'Vanguard Real Estate ETF',
+            'commodities': 'iShares Commodity ETF'
+          };
+          return etfs[type] || 'Recommended ETF';
+        }
+        // Calculate risk profile based on selected investments
+        let totalRisk = 0;
+        const allocations = [];
+        const riskWeights = {
+          'bonds': 1,
+          'corporate-bonds': 2,
+          'index-funds': 3,
+          'blue-chip': 4,
+          'growth-stocks': 5,
+          'crypto': 6,
+          'reits': 3,
+          'commodities': 5
+        };
+        clonedItems.forEach(item => {
+          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          const percentage = parseInt(percentageDisplay.textContent);
+          const investmentType = item.dataset.type;
+          const riskWeight = riskWeights[investmentType];
+          totalRisk += (riskWeight * percentage) / 100;
+          // Store allocation for pie chart
+          allocations.push({
+            value: percentage,
+            name: item.querySelector('h4').textContent,
+            itemStyle: {
+              color: getColorForInvestmentType(investmentType)
+            }
+          });
+        });
+        // Update risk meter
+        const riskMeterChart = echarts.getInstanceByDom(document.getElementById('risk-meter-container'));
+        riskMeterChart.setOption({
+          series: [{
+            data: [{
+              value: totalRisk * 16.67, // Convert to 0-100 scale
+              name: 'Risk Level'
+            }]
+          }]
+        });
+        // Update risk profile type text
+        const riskProfileType = document.getElementById('risk-profile-type');
+        if (totalRisk < 2) {
+          riskProfileType.textContent = 'Conservative';
+        } else if (totalRisk < 3) {
+          riskProfileType.textContent = 'Moderate-Conservative';
+        } else if (totalRisk < 4) {
+          riskProfileType.textContent = 'Moderate';
+        } else if (totalRisk < 5) {
+          riskProfileType.textContent = 'Moderate-Aggressive';
+        } else {
+          riskProfileType.textContent = 'Aggressive';
+        }
+        // Update allocation chart
+        const allocationChart = echarts.getInstanceByDom(document.getElementById('allocation-chart-container'));
+        allocationChart.setOption({
+          series: [{
+            data: allocations
+          }]
+        });
+        // Update allocation text display
+        const allocationList = document.querySelector('#risk-profile-section .space-y-2.mt-4');
+        allocationList.innerHTML = allocations.map(allocation => `
 <div class="flex items-center">
 <span class="w-3 h-3 rounded-full mr-2" style="background-color: ${allocation.itemStyle.color}"></span>
 <span class="text-sm text-gray-700">${allocation.name} - ${allocation.value}%</span>
 </div>
 `).join('');
-// Show results sections
-riskProfileSection.classList.remove('hidden');
-historicalPerformanceSection.classList.remove('hidden');
-// Scroll to results
-riskProfileSection.scrollIntoView({ behavior: 'smooth' });
-});
-function getColorForInvestmentType(type) {
-const colors = {
-'bonds': 'rgba(87, 181, 231, 1)',
-'corporate-bonds': 'rgba(141, 211, 199, 1)',
-'index-funds': 'rgba(251, 191, 114, 1)',
-'blue-chip': 'rgba(252, 141, 98, 1)',
-'growth-stocks': 'rgba(231, 138, 195, 1)',
-'crypto': 'rgba(166, 216, 84, 1)',
-'reits': 'rgba(179, 179, 179, 1)',
-'commodities': 'rgba(255, 187, 120, 1)'
-};
-return colors[type] || 'rgba(179, 179, 179, 1)';
-}
-// Investment Modal Functionality
-const investmentModal = document.getElementById('investment-modal');
-const closeModalBtn = document.getElementById('close-modal');
-const addToPortfolioBtn = document.getElementById('add-to-portfolio');
-function openInvestmentModal(investmentType) {
-const modalTitle = document.getElementById('modal-title');
-const modalIcon = document.getElementById('modal-icon');
-const modalRisk = document.getElementById('modal-risk');
-const modalDescription = document.getElementById('modal-description');
-const modalRiskBar = document.getElementById('modal-risk-bar');
-const modalRiskPercentage = document.getElementById('modal-risk-percentage');
-const modalReturn = document.getElementById('modal-return');
-const modalLiquidity = document.getElementById('modal-liquidity');
-const modalRecommendations = document.getElementById('modal-recommendations');
-const modalHowTo = document.getElementById('modal-how-to');
-// Set modal content based on investment type
-switch(investmentType) {
-case 'bonds':
-modalTitle.textContent = 'Government Bonds';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-primary mr-3';
-modalIcon.innerHTML = '<i class="ri-bank-line ri-lg"></i>';
-modalRisk.textContent = 'Low Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800';
-modalDescription.textContent = 'Government bonds are debt securities issued by a government to support government spending and obligations. They generally include a commitment to pay periodic interest, called coupon payments, and to repay the face value on the maturity date. They are considered among the safest investments as they are backed by the full faith and credit of the issuing government.';
-modalRiskBar.style.width = '20%';
-modalRiskPercentage.textContent = '20%';
-modalReturn.innerHTML = '2-4% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'High';
-modalRecommendations.innerHTML = `
-<li>Conservative investors seeking capital preservation</li>
-<li>Retirees needing stable income</li>
-<li>Short-term investment goals (1-3 years)</li>
-<li>Portfolio diversification to reduce overall risk</li>
-`;
-modalChart.setOption({
-series: [{
-data: [2.1, 2.5, 3.2, 2.8, 3.5, 3.9]
-}]
-});
-break;
-case 'corporate-bonds':
-modalTitle.textContent = 'Corporate Bonds';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-green-100 rounded-full text-green-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-building-line ri-lg"></i>';
-modalRisk.textContent = 'Medium-Low Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-green-100 text-green-800';
-modalDescription.textContent = 'Corporate bonds are debt securities issued by corporations to raise money for business operations. They typically pay higher interest rates than government bonds to compensate for their higher risk. The creditworthiness of the issuing company significantly impacts the bond\'s risk and return profile.';
-modalRiskBar.style.width = '35%';
-modalRiskPercentage.textContent = '35%';
-modalReturn.innerHTML = '3-6% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'Medium-High';
-modalRecommendations.innerHTML = `
-<li>Investors seeking higher yields than government bonds</li>
-<li>Income-focused investors comfortable with moderate risk</li>
-<li>Medium-term investment goals (3-5 years)</li>
-<li>Diversification across different corporate sectors</li>
-`;
-modalChart.setOption({
-series: [{
-data: [3.2, 4.1, 5.0, 4.2, 5.5, 5.8]
-}]
-});
-break;
-case 'index-funds':
-modalTitle.textContent = 'Index Funds';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full text-purple-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-line-chart-line ri-lg"></i>';
-modalRisk.textContent = 'Medium Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-purple-100 text-purple-800';
-modalDescription.textContent = 'Index funds are passively managed investment funds that aim to replicate the performance of a specific market index, such as the S&P 500. They offer broad market exposure, low operating expenses, and low portfolio turnover. They provide instant diversification across many securities in a single investment.';
-modalRiskBar.style.width = '50%';
-modalRiskPercentage.textContent = '50%';
-modalReturn.innerHTML = '7-10% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'High';
-modalRecommendations.innerHTML = `
-<li>Long-term investors seeking market returns</li>
-<li>Cost-conscious investors preferring passive management</li>
-<li>Retirement portfolio building</li>
-<li>Core portfolio holding for broad market exposure</li>
-`;
-modalChart.setOption({
-series: [{
-data: [8.2, 12.5, -10.8, 18.5, 9.2, 15.4]
-}]
-});
-break;
-case 'blue-chip':
-modalTitle.textContent = 'Blue-Chip Stocks';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-stock-line ri-lg"></i>';
-modalRisk.textContent = 'Medium-High Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-indigo-100 text-indigo-800';
-modalDescription.textContent = 'Blue-chip stocks are shares of large, well-established companies with a history of reliable performance. These companies typically have strong market positions, solid financials, and a track record of paying dividends. They are considered more stable than smaller company stocks but still carry market risk.';
-modalRiskBar.style.width = '65%';
-modalRiskPercentage.textContent = '65%';
-modalReturn.innerHTML = '8-12% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'High';
-modalRecommendations.innerHTML = `
-<li>Growth and income-focused investors</li>
-<li>Long-term wealth building strategies</li>
-<li>Dividend income seekers</li>
-<li>Core portfolio holding for stability</li>
-`;
-modalChart.setOption({
-series: [{
-data: [9.5, 15.2, -12.3, 22.1, 11.5, 16.8]
-}]
-});
-break;
-case 'growth-stocks':
-modalTitle.textContent = 'Growth Stocks';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-rocket-line ri-lg"></i>';
-modalRisk.textContent = 'High Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-orange-100 text-orange-800';
-modalDescription.textContent = 'Growth stocks are shares in companies expected to grow at an above-average rate compared to other companies in the market. These companies typically reinvest their earnings to accelerate growth rather than paying dividends. They offer higher potential returns but come with higher volatility and risk.';
-modalRiskBar.style.width = '80%';
-modalRiskPercentage.textContent = '80%';
-modalReturn.innerHTML = '10-15% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'High';
-modalRecommendations.innerHTML = `
-<li>Aggressive growth investors</li>
-<li>Long investment horizon (5+ years)</li>
-<li>High risk tolerance</li>
-<li>Portfolio growth acceleration</li>
-`;
-modalChart.setOption({
-series: [{
-data: [12.5, 28.3, -22.1, 35.2, 15.8, 25.4]
-}]
-});
-break;
-case 'crypto':
-modalTitle.textContent = 'Cryptocurrency';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-red-100 rounded-full text-red-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-bit-coin-line ri-lg"></i>';
-modalRisk.textContent = 'Very High Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-red-100 text-red-800';
-modalDescription.textContent = 'Cryptocurrency is a digital or virtual currency that uses cryptography for security. It operates on decentralized networks based on blockchain technology. Highly volatile and speculative in nature, cryptocurrencies can experience dramatic price swings in short periods.';
-modalRiskBar.style.width = '95%';
-modalRiskPercentage.textContent = '95%';
-modalReturn.innerHTML = '-30% to +100% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'Medium';
-modalRecommendations.innerHTML = `
-<li>High-risk tolerant investors</li>
-<li>Tech-savvy investors</li>
-<li>Small portfolio allocation (1-5%)</li>
-<li>Long-term speculative investment</li>
-`;
-modalChart.setOption({
-series: [{
-data: [-25.3, 95.2, -45.8, 150.3, -30.2, 65.4]
-}]
-});
-break;
-case 'reits':
-modalTitle.textContent = 'REITs';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-home-line ri-lg"></i>';
-modalRisk.textContent = 'Medium Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-teal-100 text-teal-800';
-modalDescription.textContent = 'Real Estate Investment Trusts (REITs) are companies that own, operate or finance income-producing real estate. They provide a way to invest in real estate without directly buying property. REITs are required to distribute at least 90% of their taxable income to shareholders annually.';
-modalRiskBar.style.width = '55%';
-modalRiskPercentage.textContent = '55%';
-modalReturn.innerHTML = '5-8% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'Medium-High';
-modalRecommendations.innerHTML = `
-<li>Income-focused investors</li>
-<li>Real estate exposure seekers</li>
-<li>Dividend income investors</li>
-<li>Portfolio diversification</li>
-`;
-modalChart.setOption({
-series: [{
-data: [6.2, 8.5, -5.3, 12.4, 7.8, 9.2]
-}]
-});
-break;
-case 'commodities':
-modalTitle.textContent = 'Commodities';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-copper-coin-line ri-lg"></i>';
-modalRisk.textContent = 'High Risk';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-yellow-100 text-yellow-800';
-modalDescription.textContent = 'Commodities are raw materials or primary agricultural products that can be bought and sold. This includes precious metals, oil, agricultural products, and more. Commodity prices can be highly volatile as they are affected by global supply and demand, weather conditions, and geopolitical events.';
-modalRiskBar.style.width = '75%';
-modalRiskPercentage.textContent = '75%';
-modalReturn.innerHTML = '2-15% <span class="text-sm font-normal text-gray-500">per year</span>';
-modalLiquidity.textContent = 'Medium';
-modalRecommendations.innerHTML = `
-<li>Inflation hedge seekers</li>
-<li>Portfolio diversification</li>
-<li>Global market exposure</li>
-<li>Tactical asset allocation</li>
-`;
-modalChart.setOption({
-series: [{
-data: [-8.5, 22.3, -15.2, 28.4, 5.6, 18.9]
-}]
-});
-break;
-default:
-modalTitle.textContent = 'Investment Details';
-modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 mr-3';
-modalIcon.innerHTML = '<i class="ri-question-line ri-lg"></i>';
-modalRisk.textContent = 'Risk Level';
-modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-800';
-modalDescription.textContent = 'Investment details not available.';
-modalRiskBar.style.width = '0%';
-modalRiskPercentage.textContent = '0%';
-modalReturn.innerHTML = 'N/A';
-modalLiquidity.textContent = 'N/A';
-modalRecommendations.innerHTML = '<li>No specific recommendations available</li>';
-modalChart.setOption({
-series: [{
-data: [0, 0, 0, 0, 0, 0]
-}]
-});
-break;
-}
-// Show modal
-investmentModal.classList.remove('hidden');
-// Resize chart to fit container
-setTimeout(() => {
-modalChart.resize();
-}, 100);
-}
-closeModalBtn.addEventListener('click', function() {
-investmentModal.classList.add('hidden');
-});
-addToPortfolioBtn.addEventListener('click', function() {
-// Find the investment type
-const investmentType = document.getElementById('modal-title').textContent;
-// Find the original block with this type
-let originalBlock = null;
-investmentBlocks.forEach(block => {
-if (block.querySelector('h4').textContent === investmentType) {
-originalBlock = block;
-}
-});
-if (originalBlock) {
-// Create a clone and add it to the investment area
-const clone = originalBlock.cloneNode(true);
-clone.classList.add('resizable');
-clone.style.position = 'relative';
-clone.style.width = '200px';
-clone.style.height = 'auto';
-// Add resize handle
-const resizeHandle = document.createElement('div');
-resizeHandle.classList.add('resize-handle');
-clone.appendChild(resizeHandle);
-// Update all items to fill the container width
-const updateItemWidths = () => {
-  const containerWidth = investmentArea.clientWidth - 32;
-  clonedItems.forEach(item => {
-    const percentage = parseInt(item.querySelector('div.absolute.top-2.right-2').textContent);
-    item.style.width = (containerWidth * percentage / 100) + 'px';
-  });
-};
-// Add percentage display
-const percentageDisplay = document.createElement('div');
-percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
-percentageDisplay.textContent = initialPercentage + '%';
-clone.appendChild(percentageDisplay);
-// Add view details functionality to the clone
-const viewDetailsBtn = clone.querySelector('button');
-viewDetailsBtn.addEventListener('click', function() {
-openInvestmentModal(clone.dataset.type);
-});
-// Add remove button
-const removeButton = document.createElement('button');
-removeButton.classList.add('absolute', 'top-2', 'left-2', 'bg-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'hover:text-red-500', 'shadow-sm');
-removeButton.innerHTML = '<i class="ri-close-line"></i>';
-removeButton.addEventListener('click', function() {
-clone.remove();
-clonedItems = clonedItems.filter(item => item !== clone);
-updateAllocation();
-});
-clone.appendChild(removeButton);
-// Add the clone to the investment area
-investmentArea.appendChild(clone);
-clonedItems.push(clone);
-// Make the clone resizable
-let isResizing = false;
-resizeHandle.addEventListener('mousedown', function(e) {
-isResizing = true;
-e.preventDefault();
-});
-document.addEventListener('mousemove', function(e) {
-if (!isResizing) return;
-const containerWidth = investmentArea.clientWidth - 32;
-const rect = investmentArea.getBoundingClientRect();
-const relativeX = e.clientX - rect.left;
-const percentage = Math.min(100, Math.max(5, Math.round((relativeX / containerWidth) * 100)));
-// Update current item
-clone.style.width = (containerWidth * percentage / 100) + 'px';
-const percentageDisplay = clone.querySelector('div.absolute.top-2.right-2');
-percentageDisplay.textContent = percentage + '%';
-// Adjust other items proportionally
-const otherItems = clonedItems.filter(item => item !== clone);
-const remainingPercentage = 100 - percentage;
-if (otherItems.length > 0) {
-  const percentagePerItem = Math.round(remainingPercentage / otherItems.length);
-  otherItems.forEach(item => {
-    const itemDisplay = item.querySelector('div.absolute.top-2.right-2');
-    itemDisplay.textContent = percentagePerItem + '%';
-    item.style.width = (containerWidth * percentagePerItem / 100) + 'px';
-  });
-}
-updateAllocation();
-});
-document.addEventListener('mouseup', function() {
-isResizing = false;
-});
-updateAllocation();
-}
-// Close the modal
-investmentModal.classList.add('hidden');
-});
-// Close modal when clicking outside
-window.addEventListener('click', function(e) {
-if (e.target === investmentModal) {
-investmentModal.classList.add('hidden');
-}
-});
-// Update simulation button
-document.getElementById('update-simulation').addEventListener('click', function() {
-// In a real application, this would update the chart with new data
-// For this demo, we'll just show an updated chart
-const chartType = document.querySelector('input[name="chart-type"]:checked').value;
-if (chartType === 'bar') {
-performanceChart.setOption({
-series: [
-{
-type: 'bar',
-areaStyle: null,
-itemStyle: {
-color: 'rgba(87, 181, 231, 1)',
-borderRadius: [4, 4, 0, 0]
-}
-},
-{
-type: 'bar',
-areaStyle: null,
-itemStyle: {
-color: 'rgba(141, 211, 199, 1)',
-borderRadius: [4, 4, 0, 0]
-}
-}
-]
-});
-} else {
-performanceChart.setOption({
-series: [
-{
-type: 'line',
-smooth: true,
-areaStyle: {
-color: {
-type: 'linear',
-x: 0,
-y: 0,
-x2: 0,
-y2: 1,
-colorStops: [{
-offset: 0, color: 'rgba(87, 181, 231, 0.2)'
-}, {
-offset: 1, color: 'rgba(87, 181, 231, 0.01)'
-}]
-}
-}
-},
-{
-type: 'line',
-smooth: true,
-areaStyle: {
-color: {
-type: 'linear',
-x: 0,
-y: 0,
-x2: 0,
-y2: 1,
-colorStops: [{
-offset: 0, color: 'rgba(141, 211, 199, 0.2)'
-}, {
-offset: 1, color: 'rgba(141, 211, 199, 0.01)'
-}]
-}
-}
-}
-]
-});
-}
-});
-});
-</script>
+        // Show results sections
+        riskProfileSection.classList.remove('hidden');
+        historicalPerformanceSection.classList.remove('hidden');
+        // Scroll to results
+        riskProfileSection.scrollIntoView({ behavior: 'smooth' });
+      });
+      function getColorForInvestmentType(type) {
+        const colors = {
+          'bonds': 'rgba(87, 181, 231, 1)',
+          'corporate-bonds': 'rgba(141, 211, 199, 1)',
+          'index-funds': 'rgba(251, 191, 114, 1)',
+          'blue-chip': 'rgba(252, 141, 98, 1)',
+          'growth-stocks': 'rgba(231, 138, 195, 1)',
+          'crypto': 'rgba(166, 216, 84, 1)',
+          'reits': 'rgba(179, 179, 179, 1)',
+          'commodities': 'rgba(255, 187, 120, 1)'
+        };
+        return colors[type] || 'rgba(179, 179, 179, 1)';
+      }
+      // Investment Modal Functionality
+      const investmentModal = document.getElementById('investment-modal');
+      const closeModalBtn = document.getElementById('close-modal');
+      const addToPortfolioBtn = document.getElementById('add-to-portfolio');
+      function openInvestmentModal(investmentType) {
+        const modalTitle = document.getElementById('modal-title');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalRisk = document.getElementById('modal-risk');
+        const modalDescription = document.getElementById('modal-description');
+        const modalRiskBar = document.getElementById('modal-risk-bar');
+        const modalRiskPercentage = document.getElementById('modal-risk-percentage');
+        const modalReturn = document.getElementById('modal-return');
+        const modalLiquidity = document.getElementById('modal-liquidity');
+        const modalRecommendations = document.getElementById('modal-recommendations');
+        const modalHowTo = document.getElementById('modal-how-to');
+        // Set modal content based on investment type
+        switch (investmentType) {
+          case 'bonds':
+            modalTitle.textContent = 'Obligațiuni Guvernamentale';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-primary mr-3';
+            modalIcon.innerHTML = '<i class="ri-bank-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Scăzut';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800';
+            modalDescription.textContent = 'Obligațiunile guvernamentale sunt titluri de datorie emise de un guvern pentru a sprijini cheltuielile și obligațiile guvernamentale. Acestea includ, în general, un angajament de a plăti dobânzi periodice, numite plăți de cupon, și de a rambursa valoarea nominală la data scadenței. Ele sunt considerate printre cele mai sigure investiții, deoarece sunt susținute de încrederea deplină a guvernului emitent.';
+            modalRiskBar.style.width = '20%';
+            modalRiskPercentage.textContent = '20%';
+            modalReturn.innerHTML = '2-4% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Ridicată';
+            modalRecommendations.innerHTML = `
+      <li>Investitori conservatori care caută conservarea capitalului</li>
+      <li>Pensionari care au nevoie de venituri stabile</li>
+      <li>Obiective de investiții pe termen scurt (1-3 ani)</li>
+      <li>Diversificarea portofoliului pentru a reduce riscul general</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [2.1, 2.5, 3.2, 2.8, 3.5, 3.9]
+              }]
+            });
+            break;
+          case 'corporate-bonds':
+            modalTitle.textContent = 'Obligațiuni Corporative';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-green-100 rounded-full text-green-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-building-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Mediu-Scăzut';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-green-100 text-green-800';
+            modalDescription.textContent = 'Obligațiunile corporative sunt titluri de datorie emise de corporații pentru a strânge bani pentru operațiunile comerciale. Acestea plătesc, de obicei, rate ale dobânzii mai mari decât obligațiunile guvernamentale pentru a compensa riscul lor mai mare. Bonitatea companiei emitente are un impact semnificativ asupra profilului de risc și rentabilitate al obligațiunii.';
+            modalRiskBar.style.width = '35%';
+            modalRiskPercentage.textContent = '35%';
+            modalReturn.innerHTML = '3-6% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Mediu-Ridicată';
+            modalRecommendations.innerHTML = `
+      <li>Investitori care caută randamente mai mari decât obligațiunile guvernamentale</li>
+      <li>Investitori axați pe venituri, confortabili cu un risc moderat</li>
+      <li>Obiective de investiții pe termen mediu (3-5 ani)</li>
+      <li>Diversificarea între diferite sectoare corporative</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [3.2, 4.1, 5.0, 4.2, 5.5, 5.8]
+              }]
+            });
+            break;
+          case 'index-funds':
+            modalTitle.textContent = 'Fonduri Index';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full text-purple-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-line-chart-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Mediu';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-purple-100 text-purple-800';
+            modalDescription.textContent = 'Fondurile index sunt fonduri de investiții gestionate pasiv, care au ca scop replicarea performanței unui anumit indice de piață, cum ar fi S&P 500. Acestea oferă o expunere largă pe piață, cheltuieli de operare reduse și o fluctuație redusă a portofoliului. Acestea oferă diversificare instantanee între multe titluri de valoare într-o singură investiție.';
+            modalRiskBar.style.width = '50%';
+            modalRiskPercentage.textContent = '50%';
+            modalReturn.innerHTML = '7-10% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Ridicată';
+            modalRecommendations.innerHTML = `
+      <li>Investitori pe termen lung care caută randamente de piață</li>
+      <li>Investitori atenți la costuri, care preferă gestionarea pasivă</li>
+      <li>Construirea unui portofoliu de pensii</li>
+      <li>Deținere de bază a portofoliului pentru o expunere largă pe piață</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [8.2, 12.5, -10.8, 18.5, 9.2, 15.4]
+              }]
+            });
+            break;
+          case 'blue-chip':
+            modalTitle.textContent = 'Acțiuni Blue-Chip';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-stock-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Mediu-Înalt';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-indigo-100 text-indigo-800';
+            modalDescription.textContent = 'Acțiunile blue-chip sunt acțiuni ale unor companii mari, bine stabilite, cu un istoric de performanță fiabilă. Aceste companii au, de obicei, poziții puternice pe piață, finanțe solide și un istoric de plată a dividendelor. Ele sunt considerate mai stabile decât acțiunile companiilor mai mici, dar încă prezintă riscul pieței.';
+            modalRiskBar.style.width = '65%';
+            modalRiskPercentage.textContent = '65%';
+            modalReturn.innerHTML = '8-12% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Ridicată';
+            modalRecommendations.innerHTML = `
+      <li>Investitori axați pe creștere și venituri</li>
+      <li>Strategii de construire a averii pe termen lung</li>
+      <li>Căutători de venituri din dividende</li>
+      <li>Deținere de bază a portofoliului pentru stabilitate</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [9.5, 15.2, -12.3, 22.1, 11.5, 16.8]
+              }]
+            });
+            break;
+          case 'growth-stocks':
+            modalTitle.textContent = 'Acțiuni de Creștere';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-rocket-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Înalt';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-orange-100 text-orange-800';
+            modalDescription.textContent = 'Acțiunile de creștere sunt acțiuni ale companiilor așteptate să crească într-un ritm peste medie, comparativ cu alte companii de pe piață. Aceste companii își reinvestesc, de obicei, câștigurile pentru a accelera creșterea, mai degrabă decât să plătească dividende. Acestea oferă potențiale randamente mai mari, dar vin cu o volatilitate și un risc mai mare.';
+            modalRiskBar.style.width = '80%';
+            modalRiskPercentage.textContent = '80%';
+            modalReturn.innerHTML = '10-15% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Ridicată';
+            modalRecommendations.innerHTML = `
+      <li>Investitori agresivi în creștere</li>
+      <li>Orizont de investiții lung (5+ ani)</li>
+      <li>Toleranță ridicată la risc</li>
+      <li>Accelerarea creșterii portofoliului</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [12.5, 28.3, -22.1, 35.2, 15.8, 25.4]
+              }]
+            });
+            break;
+          case 'crypto':
+            modalTitle.textContent = 'Criptomonedă';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-red-100 rounded-full text-red-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-bit-coin-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Foarte Înalt';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-red-100 text-red-800';
+            modalDescription.textContent = 'Criptomoneda este o monedă digitală sau virtuală care utilizează criptografia pentru securitate. Funcționează pe rețele descentralizate bazate pe tehnologia blockchain. Fiind extrem de volatile și speculative, criptomonedele pot experimenta fluctuații dramatice ale prețurilor în perioade scurte.';
+            modalRiskBar.style.width = '95%';
+            modalRiskPercentage.textContent = '95%';
+            modalReturn.innerHTML = '-30% până la +100% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Medie';
+            modalRecommendations.innerHTML = `
+      <li>Investitori cu toleranță ridicată la risc</li>
+      <li>Investitori cunoscători de tehnologie</li>
+      <li>Alocare mică a portofoliului (1-5%)</li>
+      <li>Investiție speculativă pe termen lung</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [-25.3, 95.2, -45.8, 150.3, -30.2, 65.4]
+              }]
+            });
+            break;
+          case 'reits':
+            modalTitle.textContent = 'REIT-uri';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-teal-100 rounded-full text-teal-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-home-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Mediu';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-teal-100 text-teal-800';
+            modalDescription.textContent = 'Fondurile de investiții imobiliare (REIT) sunt companii care dețin, operează sau finanțează proprietăți imobiliare producătoare de venituri. Acestea oferă o modalitate de a investi în imobiliare fără a cumpăra direct proprietăți. REIT-urilor li se cere să distribuie anual acționarilor cel puțin 90% din venitul lor impozabil.';
+            modalRiskBar.style.width = '55%';
+            modalRiskPercentage.textContent = '55%';
+            modalReturn.innerHTML = '5-8% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Mediu-Ridicată';
+            modalRecommendations.innerHTML = `
+      <li>Investitori axați pe venituri</li>
+      <li>Căutători de expunere imobiliară</li>
+      <li>Investitori în venituri din dividende</li>
+      <li>Diversificarea portofoliului</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [6.2, 8.5, -5.3, 12.4, 7.8, 9.2]
+              }]
+            });
+            break;
+          case 'commodities':
+            modalTitle.textContent = 'Materii Prime';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full text-yellow-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-copper-coin-line ri-lg"></i>';
+            modalRisk.textContent = 'Risc Înalt';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-yellow-100 text-yellow-800';
+            modalDescription.textContent = 'Materiile prime sunt materii prime sau produse agricole primare care pot fi cumpărate și vândute. Aceasta include metale prețioase, petrol, produse agricole și multe altele. Prețurile mărfurilor pot fi extrem de volatile, deoarece sunt afectate de oferta și cererea globală, condițiile meteorologice și evenimentele geopolitice.';
+            modalRiskBar.style.width = '75%';
+            modalRiskPercentage.textContent = '75%';
+            modalReturn.innerHTML = '2-15% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalLiquidity.textContent = 'Medie';
+            modalRecommendations.innerHTML = `
+      <li>Căutători de acoperire împotriva inflației</li>
+      <li>Diversificarea portofoliului</li>
+      <li>Expunere pe piața globală</li>
+      <li>Alocarea tactică a activelor</li>
+      `;
+            modalChart.setOption({
+              series: [{
+          data: [-8.5, 22.3, -15.2, 28.4, 5.6, 18.9]
+              }]
+            });
+            break;
+          default:
+            modalTitle.textContent = 'Detalii Investiție';
+            modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 mr-3';
+            modalIcon.innerHTML = '<i class="ri-question-line ri-lg"></i>';
+            modalRisk.textContent = 'Nivel de Risc';
+            modalRisk.className = 'text-xs font-medium px-2 py-0.5 rounded bg-gray-100 text-gray-800';
+            modalDescription.textContent = 'Detalii despre investiție indisponibile.';
+            modalRiskBar.style.width = '0%';
+            modalRiskPercentage.textContent = '0%';
+            modalReturn.innerHTML = 'N/A';
+            modalLiquidity.textContent = 'N/A';
+            modalRecommendations.innerHTML = '<li>Nu sunt disponibile recomandări specifice</li>';
+            modalChart.setOption({
+              series: [{
+          data: [0, 0, 0, 0, 0, 0]
+              }]
+            });
+            break;
+        }
+        // Show modal
+        investmentModal.classList.remove('hidden');
+        // Resize chart to fit container
+        setTimeout(() => {
+          modalChart.resize();
+        }, 100);
+      }
+      closeModalBtn.addEventListener('click', function () {
+        investmentModal.classList.add('hidden');
+      });
+      addToPortfolioBtn.addEventListener('click', function () {
+        // Find the investment type
+        const investmentType = document.getElementById('modal-title').textContent;
+        // Find the original block with this type
+        let originalBlock = null;
+        investmentBlocks.forEach(block => {
+          if (block.querySelector('h4').textContent === investmentType) {
+            originalBlock = block;
+          }
+        });
+        if (originalBlock) {
+          // Create a clone and add it to the investment area
+          const clone = originalBlock.cloneNode(true);
+          clone.classList.add('resizable');
+          clone.style.position = 'relative';
+          clone.style.width = '200px';
+          clone.style.height = 'auto';
+          // Add resize handle
+          const resizeHandle = document.createElement('div');
+          resizeHandle.classList.add('resize-handle');
+          clone.appendChild(resizeHandle);
+          // Update all items to fill the container width
+          const updateItemWidths = () => {
+            const containerWidth = investmentArea.clientWidth - 32;
+            clonedItems.forEach(item => {
+              const percentage = parseInt(item.querySelector('div.absolute.top-2.right-2').textContent);
+              item.style.width = (containerWidth * percentage / 100) + 'px';
+            });
+          };
+          // Add percentage display
+          const percentageDisplay = document.createElement('div');
+          percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
+          percentageDisplay.textContent = initialPercentage + '%';
+          clone.appendChild(percentageDisplay);
+          // Add view details functionality to the clone
+          const viewDetailsBtn = clone.querySelector('button');
+          viewDetailsBtn.addEventListener('click', function () {
+            openInvestmentModal(clone.dataset.type);
+          });
+          // Add remove button
+          const removeButton = document.createElement('button');
+          removeButton.classList.add('absolute', 'top-2', 'left-2', 'bg-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'hover:text-red-500', 'shadow-sm');
+          removeButton.innerHTML = '<i class="ri-close-line"></i>';
+          removeButton.addEventListener('click', function () {
+            clone.remove();
+            clonedItems = clonedItems.filter(item => item !== clone);
+            updateAllocation();
+          });
+          clone.appendChild(removeButton);
+          // Add the clone to the investment area
+          investmentArea.appendChild(clone);
+          clonedItems.push(clone);
+          // Make the clone resizable
+          let isResizing = false;
+          resizeHandle.addEventListener('mousedown', function (e) {
+            isResizing = true;
+            e.preventDefault();
+          });
+          document.addEventListener('mousemove', function (e) {
+            if (!isResizing) return;
+            const containerWidth = investmentArea.clientWidth - 32;
+            const rect = investmentArea.getBoundingClientRect();
+            const relativeX = e.clientX - rect.left;
+            const percentage = Math.min(100, Math.max(5, Math.round((relativeX / containerWidth) * 100)));
+            // Update current item
+            clone.style.width = (containerWidth * percentage / 100) + 'px';
+            const percentageDisplay = clone.querySelector('div.absolute.top-2.right-2');
+            percentageDisplay.textContent = percentage + '%';
+            // Adjust other items proportionally
+            const otherItems = clonedItems.filter(item => item !== clone);
+            const remainingPercentage = 100 - percentage;
+            if (otherItems.length > 0) {
+              const percentagePerItem = Math.round(remainingPercentage / otherItems.length);
+              otherItems.forEach(item => {
+                const itemDisplay = item.querySelector('div.absolute.top-2.right-2');
+                itemDisplay.textContent = percentagePerItem + '%';
+                item.style.width = (containerWidth * percentagePerItem / 100) + 'px';
+              });
+            }
+            updateAllocation();
+          });
+          document.addEventListener('mouseup', function () {
+            isResizing = false;
+          });
+          updateAllocation();
+        }
+        // Close the modal
+        investmentModal.classList.add('hidden');
+      });
+      // Close modal when clicking outside
+      window.addEventListener('click', function (e) {
+        if (e.target === investmentModal) {
+          investmentModal.classList.add('hidden');
+        }
+      });
+      // Update simulation button
+      document.getElementById('update-simulation').addEventListener('click', function () {
+        // In a real application, this would update the chart with new data
+        // For this demo, we'll just show an updated chart
+        const chartType = document.querySelector('input[name="chart-type"]:checked').value;
+        if (chartType === 'bar') {
+          performanceChart.setOption({
+            series: [
+              {
+                type: 'bar',
+                areaStyle: null,
+                itemStyle: {
+                  color: 'rgba(87, 181, 231, 1)',
+                  borderRadius: [4, 4, 0, 0]
+                }
+              },
+              {
+                type: 'bar',
+                areaStyle: null,
+                itemStyle: {
+                  color: 'rgba(141, 211, 199, 1)',
+                  borderRadius: [4, 4, 0, 0]
+                }
+              }
+            ]
+          });
+        } else {
+          performanceChart.setOption({
+            series: [
+              {
+                type: 'line',
+                smooth: true,
+                areaStyle: {
+                  color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [{
+                      offset: 0, color: 'rgba(87, 181, 231, 0.2)'
+                    }, {
+                      offset: 1, color: 'rgba(87, 181, 231, 0.01)'
+                    }]
+                  }
+                }
+              },
+              {
+                type: 'line',
+                smooth: true,
+                areaStyle: {
+                  color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [{
+                      offset: 0, color: 'rgba(141, 211, 199, 0.2)'
+                    }, {
+                      offset: 1, color: 'rgba(141, 211, 199, 0.01)'
+                    }]
+                  }
+                }
+              }
+            ]
+          });
+        }
+      });
+    });
+  </script>
 </body>
+
 </html>
