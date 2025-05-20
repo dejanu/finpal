@@ -203,7 +203,7 @@
 </head>
 
 <body>
-  <header class="bg-white shadow-sm">
+  <!-- <header class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
       <div class="flex items-center">
         <h1 class="text-2xl font-['Pacifico'] text-primary mr-2">logo</h1>
@@ -218,7 +218,7 @@
           acum</button>
       </nav>
     </div>
-  </header>
+  </header> -->
   <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
     <section class="mb-12">
       <div class="text-center mb-10">
@@ -228,8 +228,8 @@
         risc.</p>
       </div>
       <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-semibold text-gray-800">Suma Lunară de Investit</h3>
+      <div class="flex items-center justify-between mb-6 flex-col md:flex-row md:items-start">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2 md:mb-0">Suma Lunară de Investit</h3>
         <div class="flex items-center space-x-4">
         <input type="number" id="investment-amount"
           class="w-32 px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-right"
@@ -250,7 +250,7 @@
           <i class="ri-bank-line ri-lg"></i>
           </div>
           <div class="ml-3">
-          <h4 class="font-medium text-gray-900">Obligațiuni Guvernamentale</h4>
+          <h4 class="font-medium text-gray-900">Titluri de Stat</h4>
           <div class="flex items-center mt-1">
             <span class="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Risc Scăzut</span>
           </div>
@@ -438,11 +438,11 @@
           <span id="remaining-allocation" class="text-xl font-semibold text-gray-900">100%</span>
         </div>
         </div>
-        <div class="flex space-x-3 mt-4 sm:mt-0">
+        <div class="flex space-x-3 mt-4 sm:mt-0 min-w-0">
         <button id="reset-allocation"
           class="px-4 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap">Resetează</button>
         <button id="calculate-profile"
-          class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap">Calculează
+          class="bg-primary text-white px-4 py-2 rounded-button font-medium hover:bg-blue-600 transition whitespace-nowrap overflow-hidden text-ellipsis">Calculează
           Profilul de Risc</button>
         </div>
       </div>
@@ -486,7 +486,7 @@
           <div class="space-y-2 mt-4">
           <div class="flex items-center">
             <span class="w-3 h-3 bg-[rgba(87,181,231,1)] rounded-full mr-2"></span>
-            <span class="text-sm text-gray-700">Obligațiuni Guvernamentale - 20%</span>
+            <span class="text-sm text-gray-700">Titluri de Stat - 20%</span>
           </div>
           <div class="flex items-center">
             <span class="w-3 h-3 bg-[rgba(141,211,199,1)] rounded-full mr-2"></span>
@@ -668,7 +668,7 @@
       </div>
     </section>
   </main>
-  <footer class="bg-gray-900 text-white">
+  <!-- <footer class="bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-1">
@@ -750,7 +750,7 @@
         </div>
       </div>
     </div>
-  </footer>
+  </footer> -->
   <!-- Investment Details Modal -->
   <div id="investment-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -762,7 +762,7 @@
               <i class="ri-bank-line ri-lg"></i>
             </div>
             <div>
-              <h3 id="modal-title" class="text-xl font-bold text-gray-900">Obligațiuni Guvernamentale</h3>
+              <h3 id="modal-title" class="text-xl font-bold text-gray-900">Titluri de Stat</h3>
               <div class="flex items-center mt-1">
                 <span id="modal-risk" class="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-800">Risc
                   Scăzut</span>
@@ -822,7 +822,7 @@
           </div>
           <div>
             <h4 class="text-lg font-semibold text-gray-800 mb-2">Cum să Investești</h4>
-            <p id="modal-how-to" class="text-gray-600 mb-3">Poți investi în obligațiuni guvernamentale prin:</p>
+            <p id="modal-how-to" class="text-gray-600 mb-3">Poți investi în titluri de stat prin:</p>
             <ul class="list-disc pl-5 text-gray-600 space-y-1">
               <li>Treasury Direct (obligațiuni ale Trezoreriei SUA)</li>
               <li>ETF-uri de obligațiuni, cum ar fi Vanguard Total Bond Market ETF (BND)</li>
@@ -1550,7 +1550,7 @@
         // Set modal content based on investment type
         switch (investmentType) {
           case 'bonds':
-            modalTitle.textContent = 'Obligațiuni Guvernamentale';
+            modalTitle.textContent = 'Titluri de Stat';
             modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-primary mr-3';
             modalIcon.innerHTML = '<i class="ri-bank-line ri-lg"></i>';
             modalRisk.textContent = 'Risc Scăzut';
