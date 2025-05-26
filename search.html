@@ -28,13 +28,14 @@
 
   <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
     <div class="text-center border p-4" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-    <form action="/search" method="get">
-      <div class="mb-3">
-        <label for="searchInput" class="form-label">Cauta Informatii financiare Symbol:</label>
-        <input type="text" class="form-control" id="symbol" placeholder="e.g TLV,DIGI" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Search Symbol</button>
-    </form>
+      <h1 class="mb-4">Cauta simbolul companiei</h1>
+      <form>
+        <div class="mb-3">
+          <label for="symbol" class="form-label">Simbolul companiei</label>
+          <input type="text" class="form-control" id="symbol" placeholder="Ex: ATB, BRD, SNG, etc." required>
+        </div>
+        <button type="submit" target="_blank" class="btn btn-primary">Cauta</button>
+      </form>
     </div>
   </div>
 
