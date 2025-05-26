@@ -44,7 +44,7 @@
   document.querySelector('form').addEventListener('submit', function(event) {
     event.preventDefault();
     //  Grafice stiri https://bvb.ro/FinancialInstruments/Details/FinancialInstrumentsDetails.aspx?s=atb
-    window.location.href = 'https://bvb.ro/FinancialInstruments/Details/FinancialInstrumentsDetails.aspx?s=' + document.querySelector('#symbol').value;
+    window.open('https://bvb.ro/FinancialInstruments/Details/FinancialInstrumentsDetails.aspx?s=' + document.querySelector('#symbol').value, '_blank');
   });
 </script>
 
