@@ -236,9 +236,9 @@
           value="1000">
         <select id="currency-selector"
           class="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+          <option value="RON">RON</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
-          <option value="GBP">GBP</option>
         </select>
         </div>
       </div>
@@ -259,7 +259,7 @@
         <p class="text-sm text-gray-600 mb-3">Titluri de valoare guvernamentale stabile, cu risc scăzut și randamente
           previzibile.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 2-4%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: 4-8%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -280,7 +280,7 @@
         <p class="text-sm text-gray-600 mb-3">Titluri de valoare emise de corporații, cu randamente mai mari decât
           obligațiunile guvernamentale.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 3-6%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: 5-11%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -301,7 +301,7 @@
         <p class="text-sm text-gray-600 mb-3">Fonduri care urmăresc indici de piață precum S&P 500, oferind expunere
           largă pe piață.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 7-10%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: -5% până la +37%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -778,7 +778,7 @@
         <div class="space-y-6">
           <div>
             <h4 class="text-lg font-semibold text-gray-800 mb-2">Descriere</h4>
-            <p id="modal-description" class="text-gray-600">Obligațiunile guvernamentale sunt titluri de datorie emise de
+            <p id="modal-description" class="text-gray-600">Titlurile de stat sunt titluri de datorie emise de
               un guvern pentru a sprijini cheltuielile și obligațiile guvernamentale. Acestea includ, în general, un
               angajament de a plăti dobânzi periodice, numite plăți de cupon, și de a rambursa valoarea nominală la data
               scadenței. Ele sunt considerate printre cele mai sigure investiții, deoarece sunt susținute de încrederea
@@ -797,7 +797,7 @@
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <h5 class="font-medium text-gray-800 mb-2">Randament Așteptat</h5>
-              <p id="modal-return" class="text-xl font-bold text-gray-900">2-4% <span
+              <p id="modal-return" class="text-xl font-bold text-gray-900">4-8% <span
                   class="text-sm font-normal text-gray-500">pe an</span></p>
               <p class="text-xs text-gray-500 mt-2">Pe baza performanței istorice</p>
             </div>
@@ -1134,7 +1134,7 @@
               }
             },
             symbol: 'none',
-            data: [2.1, 2.5, 3.2, 2.8, 3.5, 3.9]
+            data: [4, 3.2, 7, 6.8, 6.5, 7.4]
           }
         ]
       };
@@ -1558,7 +1558,7 @@
             modalDescription.textContent = 'Obligațiunile guvernamentale sunt titluri de datorie emise de un guvern pentru a sprijini cheltuielile și obligațiile guvernamentale. Acestea includ, în general, un angajament de a plăti dobânzi periodice, numite plăți de cupon, și de a rambursa valoarea nominală la data scadenței. Ele sunt considerate printre cele mai sigure investiții, deoarece sunt susținute de încrederea deplină a guvernului emitent.';
             modalRiskBar.style.width = '20%';
             modalRiskPercentage.textContent = '20%';
-            modalReturn.innerHTML = '2-4% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '4-8% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Ridicată';
             modalRecommendations.innerHTML = `
       <li>Investitori conservatori care caută conservarea capitalului</li>
@@ -1568,7 +1568,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [2.1, 2.5, 3.2, 2.8, 3.5, 3.9]
+          data: [4, 3.2, 7, 6.8, 6.5, 7.4]
               }]
             });
             break;
@@ -1581,7 +1581,7 @@
             modalDescription.textContent = 'Obligațiunile corporative sunt titluri de datorie emise de corporații pentru a strânge bani pentru operațiunile comerciale. Acestea plătesc, de obicei, rate ale dobânzii mai mari decât obligațiunile guvernamentale pentru a compensa riscul lor mai mare. Bonitatea companiei emitente are un impact semnificativ asupra profilului de risc și rentabilitate al obligațiunii.';
             modalRiskBar.style.width = '35%';
             modalRiskPercentage.textContent = '35%';
-            modalReturn.innerHTML = '3-6% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '5-11% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Mediu-Ridicată';
             modalRecommendations.innerHTML = `
       <li>Investitori care caută randamente mai mari decât obligațiunile guvernamentale</li>
@@ -1591,7 +1591,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [3.2, 4.1, 5.0, 4.2, 5.5, 5.8]
+          data: [5.35, 3, 7.6, 8.25, 9, 11]
               }]
             });
             break;
@@ -1604,7 +1604,7 @@
             modalDescription.textContent = 'Fondurile index sunt fonduri de investiții gestionate pasiv, care au ca scop replicarea performanței unui anumit indice de piață, cum ar fi S&P 500. Acestea oferă o expunere largă pe piață, cheltuieli de operare reduse și o fluctuație redusă a portofoliului. Acestea oferă diversificare instantanee între multe titluri de valoare într-o singură investiție.';
             modalRiskBar.style.width = '50%';
             modalRiskPercentage.textContent = '50%';
-            modalReturn.innerHTML = '7-10% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '-5% până la +37% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Ridicată';
             modalRecommendations.innerHTML = `
       <li>Investitori pe termen lung care caută randamente de piață</li>
@@ -1614,7 +1614,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [8.2, 12.5, -10.8, 18.5, 9.2, 15.4]
+          data: [36.69, 0.95, 36.67, -4.67, 32.42, 5.39]
               }]
             });
             break;
