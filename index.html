@@ -322,7 +322,7 @@
         <p class="text-sm text-gray-600 mb-3">Acțiuni ale unor companii bine stabilite, solide din punct de vedere
           financiar, cu performanțe fiabile.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 8-12%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: 5-200%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -343,7 +343,7 @@
         <p class="text-sm text-gray-600 mb-3">Acțiuni ale unor companii așteptate să crească într-un ritm peste medie
           în raport cu piața.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 10-15%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: -27% până la +143%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -364,7 +364,7 @@
         <p class="text-sm text-gray-600 mb-3">Monede digitale sau virtuale care utilizează criptografia pentru
           securitate și funcționează independent.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: -30% până la +100%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: -84% până la +144%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -385,7 +385,7 @@
         <p class="text-sm text-gray-600 mb-3">Fonduri de Investiții Imobiliare care dețin, operează sau finanțează
           proprietăți producătoare de venituri.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 5-8%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: -25% până la 92% </span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -406,7 +406,7 @@
         <p class="text-sm text-gray-600 mb-3">Materii prime sau produse agricole primare care pot fi cumpărate și
           vândute.</p>
         <div class="mt-auto flex justify-between items-center">
-          <span class="text-xs text-gray-500">Randament Mediu: 2-15%</span>
+          <span class="text-xs text-gray-500">Randament Mediu: -2.5% până la 26%</span>
           <button class="text-primary text-sm font-medium hover:text-blue-700 whitespace-nowrap">Vezi
           Detalii</button>
         </div>
@@ -1627,7 +1627,7 @@
             modalDescription.textContent = 'Acțiunile blue-chip sunt acțiuni ale unor companii mari, bine stabilite, cu un istoric de performanță fiabilă. Aceste companii au, de obicei, poziții puternice pe piață, finanțe solide și un istoric de plată a dividendelor. Ele sunt considerate mai stabile decât acțiunile companiilor mai mici, dar încă prezintă riscul pieței.';
             modalRiskBar.style.width = '65%';
             modalRiskPercentage.textContent = '65%';
-            modalReturn.innerHTML = '8-12% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '5-200% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Ridicată';
             modalRecommendations.innerHTML = `
       <li>Investitori axați pe creștere și venituri</li>
@@ -1637,7 +1637,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [9.5, 15.2, -12.3, 22.1, 11.5, 16.8]
+          data: [25.35, 112.62, 32.93, 205.72, 5.93, 38.84]
               }]
             });
             break;
@@ -1650,7 +1650,7 @@
             modalDescription.textContent = 'Acțiunile de creștere sunt acțiuni ale companiilor așteptate să crească într-un ritm peste medie, comparativ cu alte companii de pe piață. Aceste companii își reinvestesc, de obicei, câștigurile pentru a accelera creșterea, mai degrabă decât să plătească dividende. Acestea oferă potențiale randamente mai mari, dar vin cu o volatilitate și un risc mai mare.';
             modalRiskBar.style.width = '80%';
             modalRiskPercentage.textContent = '80%';
-            modalReturn.innerHTML = '10-15% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '-27% până la +143% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Ridicată';
             modalRecommendations.innerHTML = `
       <li>Investitori agresivi în creștere</li>
@@ -1660,7 +1660,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [12.5, 28.3, -22.1, 35.2, 15.8, 25.4]
+          data: [4.5, 44.5, -26.8, 142.8, 120.1, -9.75]
               }]
             });
             break;
@@ -1673,7 +1673,7 @@
             modalDescription.textContent = 'Criptomoneda este o monedă digitală sau virtuală care utilizează criptografia pentru securitate. Funcționează pe rețele descentralizate bazate pe tehnologia blockchain. Fiind extrem de volatile și speculative, criptomonedele pot experimenta fluctuații dramatice ale prețurilor în perioade scurte.';
             modalRiskBar.style.width = '95%';
             modalRiskPercentage.textContent = '95%';
-            modalReturn.innerHTML = '-30% până la +100% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '-83% până la +144% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Medie';
             modalRecommendations.innerHTML = `
       <li>Investitori cu toleranță ridicată la risc</li>
@@ -1683,7 +1683,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [-25.3, 95.2, -45.8, 150.3, -30.2, 65.4]
+          data: [144.54, 76.71, -83.47, 108.67, 97.06, 15.64]
               }]
             });
             break;
@@ -1696,7 +1696,7 @@
             modalDescription.textContent = 'Fondurile de investiții imobiliare (REIT) sunt companii care dețin, operează sau finanțează proprietăți imobiliare producătoare de venituri. Acestea oferă o modalitate de a investi în imobiliare fără a cumpăra direct proprietăți. REIT-urilor li se cere să distribuie anual acționarilor cel puțin 90% din venitul lor impozabil.';
             modalRiskBar.style.width = '55%';
             modalRiskPercentage.textContent = '55%';
-            modalReturn.innerHTML = '5-8% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '-25% până la 92% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Mediu-Ridicată';
             modalRecommendations.innerHTML = `
       <li>Investitori axați pe venituri</li>
@@ -1706,7 +1706,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [6.2, 8.5, -5.3, 12.4, 7.8, 9.2]
+          data: [0, 92.65, 24.8, 4.15, -13.78, 29.77]
               }]
             });
             break;
@@ -1719,7 +1719,7 @@
             modalDescription.textContent = 'Materiile prime sunt materii prime sau produse agricole primare care pot fi cumpărate și vândute. Aceasta include metale prețioase, petrol, produse agricole și multe altele. Prețurile mărfurilor pot fi extrem de volatile, deoarece sunt afectate de oferta și cererea globală, condițiile meteorologice și evenimentele geopolitice.';
             modalRiskBar.style.width = '75%';
             modalRiskPercentage.textContent = '75%';
-            modalReturn.innerHTML = '2-15% <span class="text-sm font-normal text-gray-500">pe an</span>';
+            modalReturn.innerHTML = '-2.5% până la 26% <span class="text-sm font-normal text-gray-500">pe an</span>';
             modalLiquidity.textContent = 'Medie';
             modalRecommendations.innerHTML = `
       <li>Căutători de acoperire împotriva inflației</li>
@@ -1729,7 +1729,7 @@
       `;
             modalChart.setOption({
               series: [{
-          data: [-8.5, 22.3, -15.2, 28.4, 5.6, 18.9]
+          data: [18.79, -2.56, 0.39, 13.5, 26.35, 22.63]
               }]
             });
             break;
