@@ -470,7 +470,7 @@
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Randament Anual Așteptat</span>
-            <span class="text-sm font-medium">7.5%</span>
+            <span id="expected-return" class="text-sm font-medium">7.5%</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-sm text-gray-600">Volatilitate</span>
@@ -1460,6 +1460,7 @@
           'reits': 3,
           'commodities': 5
         };
+
         clonedItems.forEach(item => {
           const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
           const percentage = parseInt(percentageDisplay.textContent);
@@ -1475,6 +1476,34 @@
             }
           });
         });
+
+        // Randamentele pe 5 ani pentru fiecare tip (media anuală)
+        const instrumentReturns = {
+          'bonds': [4, 3.2, 7, 6.8, 6.5, 7.4],
+          'corporate-bonds': [5.35, 3, 7.6, 8.25, 9, 11],
+          'index-funds': [36.69, 0.95, 36.67, -4.67, 32.42, 5.39],
+          'blue-chip': [25.35, 112.62, 32.93, 205.72, 5.93, 38.84],
+          'growth-stocks': [4.5, 44.5, -26.8, 142.8, 120.1, -9.75],
+          'crypto': [144.54, 76.71, -83.47, 108.67, 97.06, 15.64],
+          'reits': [0, 92.65, 24.8, 4.15, -13.78, 29.77],
+          'commodities': [18.79, -2.56, 0.39, 13.5, 26.35, 22.63]
+        };
+
+        let weightedReturn = 0;
+        clonedItems.forEach(item => {
+          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          const percentage = parseInt(percentageDisplay.textContent);
+          const investmentType = item.dataset.type;
+          const returns = instrumentReturns[investmentType];
+          let avgReturn = 0;
+          debugger;
+          if (returns && returns.length > 0) {
+            avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
+          }
+          weightedReturn += (avgReturn * percentage) / 100;
+        });
+        document.getElementById('expected-return').textContent = weightedReturn.toFixed(1) + '%';
+
         // Update risk meter
         const riskMeterChart = echarts.getInstanceByDom(document.getElementById('risk-meter-container'));
         riskMeterChart.setOption({
