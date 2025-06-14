@@ -1516,6 +1516,11 @@
         // Show results sections
         riskProfileSection.classList.remove('hidden');
         historicalPerformanceSection.classList.remove('hidden');
+        // Resize charts after making them visible
+        riskMeterChart.resize();
+        allocationChart.resize();
+        performanceChart.resize();
+        modalChart.resize();
         // Scroll to results
         riskProfileSection.scrollIntoView({ behavior: 'smooth' });
       });
