@@ -840,6 +840,8 @@
     </div>
   </div>
   <script>
+    var numYears = 6; // Number of years for performance simulation
+    var portfolioSeries = Array(numYears).fill(0);
     document.addEventListener('DOMContentLoaded', function () {
       // Initialize charts
       const riskMeterChart = echarts.init(document.getElementById('risk-meter-container'));
@@ -973,7 +975,7 @@
           }
         },
         legend: {
-          data: ['Your Portfolio', 'S&P 500'],
+          data: ['Portofoliul', 'S&P 500'],
           bottom: 0
         },
         grid: {
@@ -986,7 +988,7 @@
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['2020-05', '2020-11', '2021-05', '2021-11', '2022-05', '2022-11', '2023-05', '2023-11', '2024-05', '2025-05'],
+          data: ['2020', '2021', '2022', '2023', '2024', '2025'],
           axisLine: {
             lineStyle: {
               color: '#e5e7eb'
@@ -1013,7 +1015,7 @@
         },
         series: [
           {
-            name: 'Your Portfolio',
+            name: 'Portofoliul tău',
             type: 'line',
             smooth: true,
             lineStyle: {
@@ -1035,7 +1037,7 @@
               }
             },
             symbol: 'none',
-            data: [12, 15, 20, 23, 28, 30, 38, 45, 55, 78]
+            data: portfolioSeries
           },
           {
             name: 'S&P 500',
@@ -1060,7 +1062,7 @@
               }
             },
             symbol: 'none',
-            data: [12, 14, 18, 20, 25, 28, 35, 40, 48, 65]
+            data: [12, 14, 18, 20, 25, 28]
           }
         ]
       };
@@ -1490,17 +1492,27 @@
         };
 
         let weightedReturn = 0;
+        portfolioSeries = Array(numYears).fill(0);
         clonedItems.forEach(item => {
           const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
           const percentage = parseInt(percentageDisplay.textContent);
           const investmentType = item.dataset.type;
           const returns = instrumentReturns[investmentType];
           let avgReturn = 0;
-          debugger;
           if (returns && returns.length > 0) {
             avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
+            for (let i = 0; i < numYears; i++) {
+                portfolioSeries[i] = parseFloat(portfolioSeries[i] + ((returns[i] * percentage) / 100)).toFixed(2);
+            }
           }
           weightedReturn += (avgReturn * percentage) / 100;
+        });
+        performanceChart.setOption({
+        series: [
+          {
+            data: portfolioSeries
+          }
+        ]
         });
         document.getElementById('expected-return').textContent = weightedReturn.toFixed(1) + '%';
 
