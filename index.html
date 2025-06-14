@@ -199,6 +199,34 @@
       left: 50%;
       transform: translate(-50%, -60%) rotate(45deg);
     }
+    .modal-scroll {
+      scrollbar-gutter: stable;
+      border-radius: 16px; 
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .modal-scroll::-webkit-scrollbar {
+      width: 8px;
+      background: transparent;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb {
+      background: #e5e7eb;
+      border-radius: 8px;
+      border: 2px solid #fff; 
+      min-height: 40px;
+      transition: background 0.2s;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb:active {
+      background: #cbd5e1;
+    }
+    .modal-scroll::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 16px;
+    }
+    .modal-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #e5e7eb transparent;
+    }
   </style>
 </head>
 
@@ -753,7 +781,7 @@
   </footer> -->
   <!-- Investment Details Modal -->
   <div id="investment-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto modal-scroll">
       <div class="p-6">
         <div class="flex justify-between items-start mb-4">
           <div class="flex items-center">
@@ -1737,7 +1765,7 @@
             });
             break;
           case 'crypto':
-            modalTitle.textContent = 'Criptomonedă';
+            modalTitle.textContent = 'Criptomonede';
             modalIcon.className = 'w-12 h-12 flex items-center justify-center bg-red-100 rounded-full text-red-600 mr-3';
             modalIcon.innerHTML = '<i class="ri-bit-coin-line ri-lg"></i>';
             modalRisk.textContent = 'Risc Foarte Înalt';
@@ -1830,6 +1858,7 @@
         setTimeout(() => {
           modalChart.resize();
         }, 100);
+        document.querySelector('#investment-modal .modal-scroll').scrollTop = 0;
       }
       closeModalBtn.addEventListener('click', function () {
         investmentModal.classList.add('hidden');
@@ -1866,6 +1895,20 @@
           // Add percentage display
           const percentageDisplay = document.createElement('div');
           percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
+          let initialPercentage = 100;
+          const numItems = clonedItems.length;
+          if (numItems > 0) {
+            initialPercentage = Math.round(100 / (numItems + 1));
+            // ajustează și celelalte instrumente deja adăugate
+            clonedItems.forEach(item => {
+              const display = item.querySelector('div.absolute.top-2.right-2');
+              if (display) display.textContent = initialPercentage + '%';
+              item.style.width = (investmentArea.clientWidth - 32) * initialPercentage / 100 + 'px';
+            });
+          }
+          percentageDisplay.textContent = initialPercentage + '%';
+          clone.style.width = (investmentArea.clientWidth - 32) * initialPercentage / 100 + 'px';
+
           percentageDisplay.textContent = initialPercentage + '%';
           clone.appendChild(percentageDisplay);
           // Add view details functionality to the clone
