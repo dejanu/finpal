@@ -1258,6 +1258,7 @@
             clone.style.position = "relative";
             // Calculate initial width based on number of items
             const numItems = clonedItems.length;
+            const previousItem = numItems > 0 ? clonedItems[numItems - 1] : null;
             const initialPercentage =
               numItems === 0 ? 100 : Math.round(100 / (numItems + 1));
             const containerWidth = investmentArea.clientWidth - 32; // Subtract padding
@@ -1297,7 +1298,7 @@
               "hover:bg-primary",
               "transition-colors",
             );
-            clone.appendChild(resizeHandle);
+            previousItem?.appendChild(resizeHandle);
             // Update all items to fill the container width
             const updateItemWidths = () => {
               const containerWidth = investmentArea.clientWidth - 32;
@@ -1373,6 +1374,7 @@
             removeButton.innerHTML = '<i class="ri-close-line"></i>';
             removeButton.addEventListener("click", function () {
               clone.remove();
+              previousItem?.removeChild(resizeHandle);
               clonedItems = clonedItems.filter((item) => item !== clone);
               updateAllocation();
             });
@@ -1390,17 +1392,31 @@
             let nextItemStartWidth = 0;
             resizeHandle.addEventListener("mousedown", function (e) {
               isResizing = true;
-              currentResizeItem = clone;
+              currentResizeItem = previousItem;
               startX = e.clientX;
-              startWidth = clone.offsetWidth;
+              startWidth = previousItem.offsetWidth;
               // Find next item for simultaneous resizing
-              const itemIndex = clonedItems.indexOf(clone);
+              const itemIndex = clonedItems.indexOf(previousItem);
               if (itemIndex < clonedItems.length - 1) {
                 const nextItem = clonedItems[itemIndex + 1];
                 nextItemStartWidth = nextItem.offsetWidth;
               }
               e.preventDefault();
             });
+            resizeHandle.addEventListener("touchstart", function (e) {
+              if (e.touches.length !== 1) return;
+              isResizing = true;
+              currentResizeItem = previousItem;
+              startX = e.touches[0].clientX;
+              startWidth = previousItem.offsetWidth;
+              // Find next item for simultaneous resizing
+              const itemIndex = clonedItems.indexOf(previousItem);
+              if (itemIndex < clonedItems.length - 1) {
+                const nextItem = clonedItems[itemIndex + 1];
+                nextItemStartWidth = nextItem.offsetWidth;
+              }
+              e.preventDefault();
+            }, { passive: false });
             document.addEventListener("mousemove", function (e) {
               if (!isResizing || !currentResizeItem) return;
               const containerWidth = investmentArea.clientWidth - 32;
@@ -1438,7 +1454,51 @@
               percentageDisplay.textContent = percentage + "%";
               updateAllocation();
             });
+            document.addEventListener("touchmove", function (e) {
+              if (!isResizing || !currentResizeItem || e.touches.length !== 1) return;
+              const containerWidth = investmentArea.clientWidth - 32;
+              const itemIndex = clonedItems.indexOf(currentResizeItem);
+              const nextItem =
+                itemIndex < clonedItems.length - 1
+                  ? clonedItems[itemIndex + 1]
+                  : null;
+              const diff = e.touches[0].clientX - startX;
+              const newWidth = Math.min(
+                Math.max(50, startWidth + diff),
+                containerWidth - (clonedItems.length - 1) * 50,
+              );
+              if (nextItem) {
+                const nextItemNewWidth = Math.min(
+                  Math.max(50, nextItemStartWidth - diff),
+                  containerWidth - (clonedItems.length - 1) * 50,
+                );
+                nextItem.style.width = nextItemNewWidth + "px";
+                // Update percentages
+                const nextItemPercentage = Math.round(
+                  (nextItemNewWidth / containerWidth) * 100,
+                );
+                const nextItemPercentageDisplay = nextItem.querySelector(
+                  "div.absolute.bottom-2",
+                );
+                nextItemPercentageDisplay.textContent = nextItemPercentage + "%";
+              }
+              currentResizeItem.style.width = newWidth + "px";
+              // Update percentage
+              const percentage = Math.round((newWidth / containerWidth) * 100);
+              const percentageDisplay = currentResizeItem.querySelector(
+                "div.absolute.bottom-2",
+              );
+              percentageDisplay.textContent = percentage + "%";
+              updateAllocation();
+            }, { passive: false });
             document.addEventListener("mouseup", function () {
+              isResizing = false;
+              currentResizeItem = null;
+              startX = 0;
+              startWidth = 0;
+              nextItemStartWidth = 0;
+            });
+            document.addEventListener("touchend", function () {
               isResizing = false;
               currentResizeItem = null;
               startX = 0;
