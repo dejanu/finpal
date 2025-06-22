@@ -1414,6 +1414,7 @@
               e.preventDefault();
             });
             resizeHandle.addEventListener("touchstart", function (e) {
+              e.preventDefault();
               if (e.touches.length !== 1) return;
               isResizing = true;
               currentResizeItem = previousItem;
