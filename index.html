@@ -443,7 +443,7 @@
       <div class="mb-6">
         <h3 class="text-xl font-semibold text-gray-800 mb-4">Alocarea Ta de Investiții</h3>
         <div id="investment-area"
-        class="investment-area border-2 border-dashed border-gray-300 rounded-lg h-96 p-4 flex flex-wrap gap-4 relative">
+        class="investment-area border-2 border-dashed border-gray-300 rounded-lg h-96 p-4 flex flex-wrap relative">
         <div class="absolute inset-0 flex items-center justify-center text-gray-400 pointer-events-none">
           <div class="text-center">
           <div class="w-16 h-16 mx-auto flex items-center justify-center bg-gray-100 rounded-full mb-2">
@@ -1046,7 +1046,7 @@
           },
           axisLabel: {
             color: '#1f2937',
-            formatter: '${value}k'
+            formatter: '{value}%'
           },
           splitLine: {
             lineStyle: {
@@ -1228,161 +1228,293 @@
         this.classList.remove('border-primary');
       });
       investmentArea.addEventListener('drop', function (e) {
-        e.preventDefault();
+          e.preventDefault();
         this.classList.remove('border-primary');
-        // Check if we already have 4 instruments
-        if (clonedItems.length >= 4) {
+          // Check if we already have 4 instruments
+          if (clonedItems.length >= 4) {
           const notification = document.createElement('div');
           notification.className = 'fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50';
-          notification.innerHTML = `
-    <div class="flex items-center">
+            notification.innerHTML = `
+      <div class="flex items-center">
       <i class="ri-error-warning-line mr-2"></i>
       <span>Maximum 4 instruments allowed</span>
-    </div>
-  `;
-          document.body.appendChild(notification);
-          setTimeout(() => notification.remove(), 3000);
-          return;
-        }
-        if (draggedItem) {
-          // Clone the dragged item
-          const clone = draggedItem.cloneNode(true);
-          clone.classList.add('resizable');
-          clone.style.opacity = '1';
-          clone.style.position = 'relative';
-          // Calculate initial width based on number of items
-          const numItems = clonedItems.length;
-          const initialPercentage = numItems === 0 ? 100 : Math.round(100 / (numItems + 1));
-          const containerWidth = investmentArea.clientWidth - 32; // Subtract padding
-          const initialWidth = (containerWidth * initialPercentage / 100);
-          clone.style.width = initialWidth + 'px';
-          // Add resize handle
-          const resizeHandle = document.createElement('div');
-          resizeHandle.classList.add('resize-handle');
-          clone.appendChild(resizeHandle);
-          // Update all items to fill the container width
-          const updateItemWidths = () => {
-            const containerWidth = investmentArea.clientWidth - 32;
-            clonedItems.forEach(item => {
-              const percentage = parseInt(item.querySelector('div.absolute.top-2.right-2').textContent);
-              item.style.width = (containerWidth * percentage / 100) + 'px';
-            });
-          };
-          // Add percentage display
-          const percentageDisplay = document.createElement('div');
-          percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
-          percentageDisplay.textContent = initialPercentage + '%';
-          clone.appendChild(percentageDisplay);
-          // Add view details functionality to the clone
-          const viewDetailsBtn = clone.querySelector('button');
-          viewDetailsBtn.addEventListener('click', function () {
-            openInvestmentModal(clone.dataset.type);
-          });
-          // Add remove button
-          const removeButton = document.createElement('button');
-          removeButton.classList.add('absolute', 'top-2', 'left-2', 'bg-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'hover:text-red-500', 'shadow-sm');
-          removeButton.innerHTML = '<i class="ri-close-line"></i>';
-          removeButton.addEventListener('click', function () {
-            clone.remove();
-            clonedItems = clonedItems.filter(item => item !== clone);
-            updateAllocation();
-          });
-          clone.appendChild(removeButton);
-          // Add the clone to the investment area
-          this.appendChild(clone);
-          clonedItems.push(clone);
-          // Make the clone resizable
-          let isResizing = false;
-          resizeHandle.addEventListener('mousedown', function (e) {
-            isResizing = true;
-            e.preventDefault();
-          });
-          document.addEventListener('mousemove', function (e) {
-            if (!isResizing) return;
-            const containerWidth = investmentArea.clientWidth - 32;
-            const rect = investmentArea.getBoundingClientRect();
-            const relativeX = e.clientX - rect.left;
-            const percentage = Math.min(100, Math.max(5, Math.round((relativeX / containerWidth) * 100)));
-            // Update current item
-            clone.style.width = (containerWidth * percentage / 100) + 'px';
-            const percentageDisplay = clone.querySelector('div.absolute.top-2.right-2');
-            percentageDisplay.textContent = percentage + '%';
-            // Adjust other items proportionally
-            const otherItems = clonedItems.filter(item => item !== clone);
-            const remainingPercentage = 100 - percentage;
-            if (otherItems.length > 0) {
-              const percentagePerItem = Math.round(remainingPercentage / otherItems.length);
-              otherItems.forEach(item => {
-                const itemDisplay = item.querySelector('div.absolute.top-2.right-2');
-                itemDisplay.textContent = percentagePerItem + '%';
-                item.style.width = (containerWidth * percentagePerItem / 100) + 'px';
-              });
-            }
-            updateAllocation();
-          });
-          document.addEventListener('mouseup', function () {
-            isResizing = false;
-          });
-          updateAllocation();
-        }
-        draggedItem = null;
-      });
-      // Update allocation percentages
-      function updateAllocation() {
-        let total = 0;
-        const items = [...clonedItems];
-        const containerWidth = investmentArea.clientWidth - 32;
-        // Calculate total percentage
-        items.forEach(item => {
-          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-          if (percentageDisplay) {
-            const percentage = parseInt(percentageDisplay.textContent);
-            if (!isNaN(percentage)) {
-              total += percentage;
-            }
+      </div>
+      `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+            return;
           }
+          if (draggedItem) {
+            // Clone the dragged item
+            const clone = document.createElement("div");
+            clone.classList.add(
+              "resizable",
+              "h-full",
+              "flex",
+              "items-center",
+              "justify-center",
+              "relative",
+            );
+            clone.style.position = "relative";
+            // Calculate initial width based on number of items
+            const numItems = clonedItems.length;
+            const initialPercentage =
+              numItems === 0 ? 100 : Math.round(100 / (numItems + 1));
+            const containerWidth = investmentArea.clientWidth - 32; // Subtract padding
+            const initialWidth = (containerWidth * initialPercentage) / 100;
+            clone.style.width = initialWidth + "px";
+            // Get background color based on risk
+            const riskColors = {
+              low: "bg-blue-100 text-blue-800",
+              "medium-low": "bg-green-100 text-green-800",
+              medium: "bg-purple-100 text-purple-800",
+              "medium-high": "bg-indigo-100 text-indigo-800",
+              high: "bg-orange-100 text-orange-800",
+              "very-high": "bg-red-100 text-red-800",
+            };
+            const riskLevel = draggedItem.dataset.risk;
+            clone.classList.add(...riskColors[riskLevel].split(" "));
+            // Add content
+            const content = document.createElement("div");
+            content.classList.add("flex", "flex-col", "items-center", "space-y-2");
+            const icon = draggedItem.querySelector(".w-10.h-10 i").cloneNode(true);
+            const title = document.createElement("h4");
+            title.classList.add("font-medium");
+            title.textContent = draggedItem.querySelector("h4").textContent;
+            content.appendChild(icon);
+            content.appendChild(title);
+            clone.appendChild(content);
+            // Add resize handle (vertical line at the right edge)
+            const resizeHandle = document.createElement("div");
+            resizeHandle.classList.add(
+              "absolute",
+              "right-0",
+              "top-0",
+              "bottom-0",
+              "w-1",
+              "bg-gray-300",
+              "cursor-col-resize",
+              "hover:bg-primary",
+              "transition-colors",
+            );
+            clone.appendChild(resizeHandle);
+            // Update all items to fill the container width
+            const updateItemWidths = () => {
+              const containerWidth = investmentArea.clientWidth - 32;
+              clonedItems.forEach((item) => {
+                const percentage = parseInt(
+                  item.querySelector("div.absolute.bottom-2").textContent,
+                );
+                item.style.width = (containerWidth * percentage) / 100 + "px";
+              });
+            };
+            // Add percentage display at the bottom
+            const percentageDisplay = document.createElement("div");
+            percentageDisplay.classList.add(
+              "absolute",
+              "bottom-2",
+              "left-1/2",
+              "-translate-x-1/2",
+              "bg-white",
+              "rounded-full",
+              "px-2",
+              "py-1",
+              "text-xs",
+              "font-medium",
+              "text-gray-700",
+              "shadow-sm",
+            );
+            percentageDisplay.textContent = initialPercentage + "%";
+            clone.appendChild(percentageDisplay);
+            // Add controls at the top
+            const controlsContainer = document.createElement("div");
+            controlsContainer.classList.add(
+              "absolute",
+              "top-2",
+              "left-1/2",
+              "-translate-x-1/2",
+              "flex",
+              "space-x-2",
+            );
+            // Add view details button
+            const viewDetailsBtn = document.createElement("button");
+            viewDetailsBtn.classList.add(
+              "bg-white",
+              "rounded-full",
+              "w-6",
+              "h-6",
+              "flex",
+              "items-center",
+              "justify-center",
+              "text-gray-500",
+              "hover:text-primary",
+              "shadow-sm",
+              "transition-colors",
+            );
+            viewDetailsBtn.innerHTML = '<i class="ri-information-line"></i>';
+            viewDetailsBtn.addEventListener("click", function () {
+              openInvestmentModal(draggedItem.dataset.type);
+            });
+            // Add remove button
+            const removeButton = document.createElement("button");
+            removeButton.classList.add(
+              "bg-white",
+              "rounded-full",
+              "w-6",
+              "h-6",
+              "flex",
+              "items-center",
+              "justify-center",
+              "text-gray-500",
+              "hover:text-red-500",
+              "shadow-sm",
+              "transition-colors",
+            );
+            removeButton.innerHTML = '<i class="ri-close-line"></i>';
+            removeButton.addEventListener("click", function () {
+              clone.remove();
+              clonedItems = clonedItems.filter((item) => item !== clone);
+              updateAllocation();
+            });
+            controlsContainer.appendChild(viewDetailsBtn);
+            controlsContainer.appendChild(removeButton);
+            clone.appendChild(controlsContainer);
+            // Add the clone to the investment area
+            this.appendChild(clone);
+            clonedItems.push(clone);
+            // Make the clone resizable
+            let isResizing = false;
+            let currentResizeItem = null;
+            let startX = 0;
+            let startWidth = 0;
+            let nextItemStartWidth = 0;
+            resizeHandle.addEventListener("mousedown", function (e) {
+              isResizing = true;
+              currentResizeItem = clone;
+              startX = e.clientX;
+              startWidth = clone.offsetWidth;
+              // Find next item for simultaneous resizing
+              const itemIndex = clonedItems.indexOf(clone);
+              if (itemIndex < clonedItems.length - 1) {
+                const nextItem = clonedItems[itemIndex + 1];
+                nextItemStartWidth = nextItem.offsetWidth;
+              }
+              e.preventDefault();
+            });
+            document.addEventListener("mousemove", function (e) {
+              if (!isResizing || !currentResizeItem) return;
+              const containerWidth = investmentArea.clientWidth - 32;
+              const itemIndex = clonedItems.indexOf(currentResizeItem);
+              const nextItem =
+                itemIndex < clonedItems.length - 1
+                  ? clonedItems[itemIndex + 1]
+                  : null;
+              const diff = e.clientX - startX;
+              const newWidth = Math.min(
+                Math.max(50, startWidth + diff),
+                containerWidth - (clonedItems.length - 1) * 50,
+              );
+              if (nextItem) {
+                const nextItemNewWidth = Math.min(
+                  Math.max(50, nextItemStartWidth - diff),
+                  containerWidth - (clonedItems.length - 1) * 50,
+                );
+                nextItem.style.width = nextItemNewWidth + "px";
+                // Update percentages
+                const nextItemPercentage = Math.round(
+                  (nextItemNewWidth / containerWidth) * 100,
+                );
+                const nextItemPercentageDisplay = nextItem.querySelector(
+                  "div.absolute.bottom-2",
+                );
+                nextItemPercentageDisplay.textContent = nextItemPercentage + "%";
+              }
+              currentResizeItem.style.width = newWidth + "px";
+              // Update percentage
+              const percentage = Math.round((newWidth / containerWidth) * 100);
+              const percentageDisplay = currentResizeItem.querySelector(
+                "div.absolute.bottom-2",
+              );
+              percentageDisplay.textContent = percentage + "%";
+              updateAllocation();
+            });
+            document.addEventListener("mouseup", function () {
+              isResizing = false;
+              currentResizeItem = null;
+              startX = 0;
+              startWidth = 0;
+              nextItemStartWidth = 0;
+            });
+            document.addEventListener("mouseup", function () {
+              isResizing = false;
+            });
+            updateAllocation();
+          }
+          draggedItem = null;
         });
-        // If there's only one item, set it to 100%
-        if (items.length === 1) {
-          const percentageDisplay = items[0].querySelector('div.absolute.top-2.right-2');
-          percentageDisplay.textContent = '100%';
-          items[0].style.width = '400px';
-          total = 100;
-        }
-        // If total exceeds 100%, adjust all proportionally
-        else if (total > 100) {
-          const scale = 100 / total;
-          items.forEach(item => {
-            const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-            const currentPercentage = parseInt(percentageDisplay.textContent);
-            const newPercentage = Math.round(currentPercentage * scale);
-            percentageDisplay.textContent = newPercentage + '%';
-            // Update width based on new percentage
-            const newWidth = 150 + ((400 - 150) * newPercentage / 100);
-            item.style.width = newWidth + 'px';
+      // Update allocation percentages
+        function updateAllocation() {
+          let total = 0;
+          const items = [...clonedItems];
+          const containerWidth = investmentArea.clientWidth - 32;
+          // Calculate total percentage
+          items.forEach((item) => {
+            const percentageDisplay = item.querySelector(
+              "div.absolute.bottom-2",
+            );
+            if (percentageDisplay) {
+              const percentage = parseInt(percentageDisplay.textContent);
+              if (!isNaN(percentage)) {
+                total += percentage;
+              }
+            }
           });
-          total = 100;
+          // If there's only one item, set it to 100%
+          if (items.length === 1) {
+            const percentageDisplay = items[0].querySelector(
+              "div.absolute.bottom-2",
+            );
+            percentageDisplay.textContent = "100%";
+            total = 100;
+          }
+          // If total exceeds 100%, adjust all proportionally
+          else if (total > 100) {
+            const scale = 100 / total;
+            items.forEach((item) => {
+              const percentageDisplay = item.querySelector(
+                "div.absolute.bottom-2",
+              );
+              const currentPercentage = parseInt(percentageDisplay.textContent);
+              const newPercentage = Math.round(currentPercentage * scale);
+              percentageDisplay.textContent = newPercentage + "%";
+              // Update width based on new percentage
+              const newWidth = ((containerWidth - 30) * newPercentage) / 100;
+              item.style.width = newWidth + "px";
+            });
+            total = 100;
+          }
+          // If total is less than 100%, distribute remaining evenly
+          else if (total < 100 && items.length > 0) {
+            const remaining = 100 - total;
+            const addPerItem = Math.round(remaining / items.length);
+            items.forEach((item) => {
+              const percentageDisplay = item.querySelector(
+                "div.absolute.bottom-2",
+              );
+              const currentPercentage = parseInt(percentageDisplay.textContent);
+              const newPercentage = currentPercentage + addPerItem;
+              percentageDisplay.textContent = newPercentage + "%";
+              // Update width based on new percentage
+              const newWidth = ((containerWidth - 30) * newPercentage) / 100;
+              item.style.width = newWidth + "px";
+            });
+            total = 100;
+          }
+          totalAllocated.textContent = total + "%";
+          remainingAllocation.textContent = 100 - total + "%";
+          totalAllocated.classList.remove("text-red-600");
+          remainingAllocation.classList.remove("text-red-600");
         }
-        // If total is less than 100%, distribute remaining evenly
-        else if (total < 100 && items.length > 0) {
-          const remaining = 100 - total;
-          const addPerItem = Math.round(remaining / items.length);
-          items.forEach(item => {
-            const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
-            const currentPercentage = parseInt(percentageDisplay.textContent);
-            const newPercentage = currentPercentage + addPerItem;
-            percentageDisplay.textContent = newPercentage + '%';
-            // Update width based on new percentage
-            const newWidth = 150 + ((400 - 150) * newPercentage / 100);
-            item.style.width = newWidth + 'px';
-          });
-          total = 100;
-        }
-        totalAllocated.textContent = total + '%';
-        remainingAllocation.textContent = (100 - total) + '%';
-        totalAllocated.classList.remove('text-red-600');
-        remainingAllocation.classList.remove('text-red-600');
-      }
       // Reset allocation
       resetButton.addEventListener('click', function () {
         clonedItems.forEach(item => item.remove());
@@ -1412,7 +1544,7 @@
         let totalGain = 0;
 
         clonedItems.forEach(item => {
-          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          const percentageDisplay = item.querySelector('div.absolute.bottom-2');
           const percentage = parseInt(percentageDisplay.textContent);
           const monthlyAmount = (investmentAmount * percentage / 100).toFixed(2);
           const investmentType = item.dataset.type;
@@ -1529,7 +1661,7 @@
         };
 
         clonedItems.forEach(item => {
-          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          const percentageDisplay = item.querySelector('div.absolute.bottom-2');
           const percentage = parseInt(percentageDisplay.textContent);
           const investmentType = item.dataset.type;
           const riskWeight = riskWeights[investmentType];
@@ -1547,7 +1679,7 @@
         let weightedReturn = 0;
         portfolioSeries = Array(numYears).fill(0);
         clonedItems.forEach(item => {
-          const percentageDisplay = item.querySelector('div.absolute.top-2.right-2');
+          const percentageDisplay = item.querySelector('div.absolute.bottom-2');
           const percentage = parseInt(percentageDisplay.textContent);
           const investmentType = item.dataset.type;
           const returns = instrumentReturns[investmentType];
@@ -1864,7 +1996,7 @@
         investmentModal.classList.add('hidden');
       });
       addToPortfolioBtn.addEventListener('click', function () {
-        // Find the investment type
+        // Find the investment type from the modal
         const investmentType = document.getElementById('modal-title').textContent;
         // Find the original block with this type
         let originalBlock = null;
@@ -1874,94 +2006,11 @@
           }
         });
         if (originalBlock) {
-          // Create a clone and add it to the investment area
-          const clone = originalBlock.cloneNode(true);
-          clone.classList.add('resizable');
-          clone.style.position = 'relative';
-          clone.style.width = '200px';
-          clone.style.height = 'auto';
-          // Add resize handle
-          const resizeHandle = document.createElement('div');
-          resizeHandle.classList.add('resize-handle');
-          clone.appendChild(resizeHandle);
-          // Update all items to fill the container width
-          const updateItemWidths = () => {
-            const containerWidth = investmentArea.clientWidth - 32;
-            clonedItems.forEach(item => {
-              const percentage = parseInt(item.querySelector('div.absolute.top-2.right-2').textContent);
-              item.style.width = (containerWidth * percentage / 100) + 'px';
-            });
-          };
-          // Add percentage display
-          const percentageDisplay = document.createElement('div');
-          percentageDisplay.classList.add('absolute', 'top-2', 'right-2', 'bg-white', 'rounded-full', 'px-2', 'py-1', 'text-xs', 'font-medium', 'text-gray-700', 'shadow-sm');
-          let initialPercentage = 100;
-          const numItems = clonedItems.length;
-          if (numItems > 0) {
-            initialPercentage = Math.round(100 / (numItems + 1));
-            // ajustează și celelalte instrumente deja adăugate
-            clonedItems.forEach(item => {
-              const display = item.querySelector('div.absolute.top-2.right-2');
-              if (display) display.textContent = initialPercentage + '%';
-              item.style.width = (investmentArea.clientWidth - 32) * initialPercentage / 100 + 'px';
-            });
-          }
-          percentageDisplay.textContent = initialPercentage + '%';
-          clone.style.width = (investmentArea.clientWidth - 32) * initialPercentage / 100 + 'px';
-
-          percentageDisplay.textContent = initialPercentage + '%';
-          clone.appendChild(percentageDisplay);
-          // Add view details functionality to the clone
-          const viewDetailsBtn = clone.querySelector('button');
-          viewDetailsBtn.addEventListener('click', function () {
-            openInvestmentModal(clone.dataset.type);
-          });
-          // Add remove button
-          const removeButton = document.createElement('button');
-          removeButton.classList.add('absolute', 'top-2', 'left-2', 'bg-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'text-gray-500', 'hover:text-red-500', 'shadow-sm');
-          removeButton.innerHTML = '<i class="ri-close-line"></i>';
-          removeButton.addEventListener('click', function () {
-            clone.remove();
-            clonedItems = clonedItems.filter(item => item !== clone);
-            updateAllocation();
-          });
-          clone.appendChild(removeButton);
-          // Add the clone to the investment area
-          investmentArea.appendChild(clone);
-          clonedItems.push(clone);
-          // Make the clone resizable
-          let isResizing = false;
-          resizeHandle.addEventListener('mousedown', function (e) {
-            isResizing = true;
-            e.preventDefault();
-          });
-          document.addEventListener('mousemove', function (e) {
-            if (!isResizing) return;
-            const containerWidth = investmentArea.clientWidth - 32;
-            const rect = investmentArea.getBoundingClientRect();
-            const relativeX = e.clientX - rect.left;
-            const percentage = Math.min(100, Math.max(5, Math.round((relativeX / containerWidth) * 100)));
-            // Update current item
-            clone.style.width = (containerWidth * percentage / 100) + 'px';
-            const percentageDisplay = clone.querySelector('div.absolute.top-2.right-2');
-            percentageDisplay.textContent = percentage + '%';
-            // Adjust other items proportionally
-            const otherItems = clonedItems.filter(item => item !== clone);
-            const remainingPercentage = 100 - percentage;
-            if (otherItems.length > 0) {
-              const percentagePerItem = Math.round(remainingPercentage / otherItems.length);
-              otherItems.forEach(item => {
-                const itemDisplay = item.querySelector('div.absolute.top-2.right-2');
-                itemDisplay.textContent = percentagePerItem + '%';
-                item.style.width = (containerWidth * percentagePerItem / 100) + 'px';
-              });
-            }
-            updateAllocation();
-          });
-          document.addEventListener('mouseup', function () {
-            isResizing = false;
-          });
-          updateAllocation();
+          // Set draggedItem to the original block
+          draggedItem = originalBlock;
+          // Call the drop handler, passing a fake event with the correct context
+          const dropEvent = new Event('drop', { bubbles: true, cancelable: true });
+          investmentArea.dispatchEvent(dropEvent);
         }
         // Close the modal
         investmentModal.classList.add('hidden');
@@ -1972,75 +2021,75 @@
           investmentModal.classList.add('hidden');
         }
       });
-      // Update simulation button
-      document.getElementById('update-simulation').addEventListener('click', function () {
-        // In a real application, this would update the chart with new data
-        // For this demo, we'll just show an updated chart
-        const chartType = document.querySelector('input[name="chart-type"]:checked').value;
-        if (chartType === 'bar') {
-          performanceChart.setOption({
-            series: [
-              {
-                type: 'bar',
-                areaStyle: null,
-                itemStyle: {
-                  color: 'rgba(87, 181, 231, 1)',
-                  borderRadius: [4, 4, 0, 0]
-                }
-              },
-              {
-                type: 'bar',
-                areaStyle: null,
-                itemStyle: {
-                  color: 'rgba(141, 211, 199, 1)',
-                  borderRadius: [4, 4, 0, 0]
-                }
-              }
-            ]
-          });
-        } else {
-          performanceChart.setOption({
-            series: [
-              {
-                type: 'line',
-                smooth: true,
-                areaStyle: {
-                  color: {
-                    type: 'linear',
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [{
-                      offset: 0, color: 'rgba(87, 181, 231, 0.2)'
-                    }, {
-                      offset: 1, color: 'rgba(87, 181, 231, 0.01)'
-                    }]
-                  }
-                }
-              },
-              {
-                type: 'line',
-                smooth: true,
-                areaStyle: {
-                  color: {
-                    type: 'linear',
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [{
-                      offset: 0, color: 'rgba(141, 211, 199, 0.2)'
-                    }, {
-                      offset: 1, color: 'rgba(141, 211, 199, 0.01)'
-                    }]
-                  }
-                }
-              }
-            ]
-          });
-        }
-      });
+      //// Update simulation button
+      // document.getElementById('update-simulation').addEventListener('click', function () {
+      //   // In a real application, this would update the chart with new data
+      //   // For this demo, we'll just show an updated chart
+      //   const chartType = document.querySelector('input[name="chart-type"]:checked').value;
+      //   if (chartType === 'bar') {
+      //     performanceChart.setOption({
+      //       series: [
+      //         {
+      //           type: 'bar',
+      //           areaStyle: null,
+      //           itemStyle: {
+      //             color: 'rgba(87, 181, 231, 1)',
+      //             borderRadius: [4, 4, 0, 0]
+      //           }
+      //         },
+      //         {
+      //           type: 'bar',
+      //           areaStyle: null,
+      //           itemStyle: {
+      //             color: 'rgba(141, 211, 199, 1)',
+      //             borderRadius: [4, 4, 0, 0]
+      //           }
+      //         }
+      //       ]
+      //     });
+      //   } else {
+      //     performanceChart.setOption({
+      //       series: [
+      //         {
+      //           type: 'line',
+      //           smooth: true,
+      //           areaStyle: {
+      //             color: {
+      //               type: 'linear',
+      //               x: 0,
+      //               y: 0,
+      //               x2: 0,
+      //               y2: 1,
+      //               colorStops: [{
+      //                 offset: 0, color: 'rgba(87, 181, 231, 0.2)'
+      //               }, {
+      //                 offset: 1, color: 'rgba(87, 181, 231, 0.01)'
+      //               }]
+      //             }
+      //           }
+      //         },
+      //         {
+      //           type: 'line',
+      //           smooth: true,
+      //           areaStyle: {
+      //             color: {
+      //               type: 'linear',
+      //               x: 0,
+      //               y: 0,
+      //               x2: 0,
+      //               y2: 1,
+      //               colorStops: [{
+      //                 offset: 0, color: 'rgba(141, 211, 199, 0.2)'
+      //               }, {
+      //                 offset: 1, color: 'rgba(141, 211, 199, 0.01)'
+      //               }]
+      //             }
+      //           }
+      //         }
+      //       ]
+      //     });
+      //   }
+      // });
     });
   </script>
 </body>
