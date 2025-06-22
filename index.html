@@ -1285,6 +1285,8 @@
             content.appendChild(icon);
             content.appendChild(title);
             clone.appendChild(content);
+            // Set data-type attribute from the dragged item
+            clone.dataset.type = draggedItem.dataset.type;
             // Add resize handle (vertical line at the right edge)
             const resizeHandle = document.createElement("div");
             resizeHandle.classList.add(
@@ -1354,7 +1356,7 @@
             );
             viewDetailsBtn.innerHTML = '<i class="ri-information-line"></i>';
             viewDetailsBtn.addEventListener("click", function () {
-              openInvestmentModal(draggedItem.dataset.type);
+              openInvestmentModal(clone.dataset.type);
             });
             // Add remove button
             const removeButton = document.createElement("button");
