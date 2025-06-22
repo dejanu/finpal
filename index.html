@@ -456,15 +456,15 @@
         </div>
       </div>
       <div class="flex flex-wrap items-center justify-between bg-gray-50 p-4 rounded-lg">
-        <div class="flex items-center space-x-6">
-        <div>
-          <span class="block text-sm text-gray-500">Total Alocat</span>
-          <span id="total-allocated" class="text-xl font-semibold text-gray-900">0%</span>
-        </div>
-        <div>
-          <span class="block text-sm text-gray-500">Rămas</span>
-          <span id="remaining-allocation" class="text-xl font-semibold text-gray-900">100%</span>
-        </div>
+        <div class="flex items-center space-x-6 hidden">
+          <div>
+            <span class="block text-sm text-gray-500">Total Alocat</span>
+            <span id="total-allocated" class="text-xl font-semibold text-gray-900">0%</span>
+          </div>
+          <div>
+            <span class="block text-sm text-gray-500">Rămas</span>
+            <span id="remaining-allocation" class="text-xl font-semibold text-gray-900">100%</span>
+          </div>
         </div>
         <div class="flex space-x-3 mt-4 sm:mt-0 min-w-0">
         <button id="reset-allocation"
@@ -1291,7 +1291,7 @@
               "right-0",
               "top-0",
               "bottom-0",
-              "w-1",
+              "w-3",
               "bg-gray-300",
               "cursor-col-resize",
               "hover:bg-primary",
@@ -1301,11 +1301,20 @@
             // Update all items to fill the container width
             const updateItemWidths = () => {
               const containerWidth = investmentArea.clientWidth - 32;
-              clonedItems.forEach((item) => {
+              let totalWidth = 0;
+              clonedItems.forEach((item, index) => {
                 const percentage = parseInt(
                   item.querySelector("div.absolute.bottom-2").textContent,
                 );
-                item.style.width = (containerWidth * percentage) / 100 + "px";
+
+                if (index === clonedItems.length - 1) {
+                  // Last item takes the remaining width
+                  item.style.width = containerWidth - totalWidth + "px";
+                } else {
+                  const newWidth = (containerWidth * percentage) / 100;
+                  item.style.width = newWidth + "px";
+                  totalWidth += newWidth;
+                }
               });
             };
             // Add percentage display at the bottom
@@ -1514,68 +1523,104 @@
           draggedItem = null;
         });
       // Update allocation percentages
-        function updateAllocation() {
-          let total = 0;
-          const items = [...clonedItems];
-          const containerWidth = investmentArea.clientWidth - 32;
-          // Calculate total percentage
-          items.forEach((item) => {
-            const percentageDisplay = item.querySelector(
-              "div.absolute.bottom-2",
-            );
-            if (percentageDisplay) {
-              const percentage = parseInt(percentageDisplay.textContent);
-              if (!isNaN(percentage)) {
-                total += percentage;
-              }
+      function updateAllocation() {
+        let total = 0;
+        const items = [...clonedItems];
+        const containerWidth = investmentArea.clientWidth - 32; // Subtract padding if needed
+
+        // Calculate total percentage
+        items.forEach((item) => {
+          const percentageDisplay = item.querySelector("div.absolute.bottom-2");
+          if (percentageDisplay) {
+            const percentage = parseInt(percentageDisplay.textContent);
+            if (!isNaN(percentage)) {
+              total += percentage;
+            }
+          }
+        });
+
+        // If there's only one item, set it to 100%
+        if (items.length === 1) {
+          const percentageDisplay = items[0].querySelector("div.absolute.bottom-2");
+          percentageDisplay.textContent = "100%";
+          items[0].style.width = containerWidth + "px";
+          total = 100;
+        }
+        // If total exceeds 100%, adjust all proportionally
+        else if (total > 100) {
+          const scale = 100 / total;
+          let widthPercentage = 0;
+          let widthSum = 0;
+          items.forEach((item, idx) => {
+            const percentageDisplay = item.querySelector("div.absolute.bottom-2");
+            const currentPercentage = parseInt(percentageDisplay.textContent);
+            let newPercentage = Math.round(currentPercentage * scale);
+            // For the last item, adjust so total is exactly 100
+            if (idx === items.length - 1) {
+              newPercentage = 100 - widthPercentage;
+              item.style.width = containerWidth - widthSum + "px";
+              percentageDisplay.textContent = newPercentage + "%";
+            }
+            else {
+              percentageDisplay.textContent = newPercentage + "%";
+              const newWidth = Math.round((containerWidth * newPercentage) / 100);
+              item.style.width = newWidth + "px";
+              widthPercentage += newPercentage;
+              widthSum += newWidth;
             }
           });
-          // If there's only one item, set it to 100%
-          if (items.length === 1) {
-            const percentageDisplay = items[0].querySelector(
-              "div.absolute.bottom-2",
-            );
-            percentageDisplay.textContent = "100%";
-            total = 100;
-          }
-          // If total exceeds 100%, adjust all proportionally
-          else if (total > 100) {
-            const scale = 100 / total;
-            items.forEach((item) => {
-              const percentageDisplay = item.querySelector(
-                "div.absolute.bottom-2",
-              );
-              const currentPercentage = parseInt(percentageDisplay.textContent);
-              const newPercentage = Math.round(currentPercentage * scale);
-              percentageDisplay.textContent = newPercentage + "%";
-              // Update width based on new percentage
-              const newWidth = ((containerWidth - 30) * newPercentage) / 100;
-              item.style.width = newWidth + "px";
-            });
-            total = 100;
-          }
-          // If total is less than 100%, distribute remaining evenly
-          else if (total < 100 && items.length > 0) {
-            const remaining = 100 - total;
-            const addPerItem = Math.round(remaining / items.length);
-            items.forEach((item) => {
-              const percentageDisplay = item.querySelector(
-                "div.absolute.bottom-2",
-              );
-              const currentPercentage = parseInt(percentageDisplay.textContent);
-              const newPercentage = currentPercentage + addPerItem;
-              percentageDisplay.textContent = newPercentage + "%";
-              // Update width based on new percentage
-              const newWidth = ((containerWidth - 30) * newPercentage) / 100;
-              item.style.width = newWidth + "px";
-            });
-            total = 100;
-          }
-          totalAllocated.textContent = total + "%";
-          remainingAllocation.textContent = 100 - total + "%";
-          totalAllocated.classList.remove("text-red-600");
-          remainingAllocation.classList.remove("text-red-600");
+          total = 100;
         }
+        // If total is less than 100%, distribute remaining evenly
+        else if (total < 100 && items.length > 0) {
+          let widthPercentage = 0;
+          let widthSum = 0;
+          const remaining = 100 - total;
+          const addPerItem = Math.floor(remaining / items.length);
+          items.forEach((item, idx) => {
+            const percentageDisplay = item.querySelector("div.absolute.bottom-2");
+            let currentPercentage = parseInt(percentageDisplay.textContent);
+            let newPercentage = currentPercentage + addPerItem;
+            // For the last item, adjust so total is exactly 100
+            if (idx === items.length - 1) {
+              newPercentage = 100 - widthPercentage;
+              item.style.width = containerWidth - widthSum + "px";
+              percentageDisplay.textContent = newPercentage + "%";
+            } else {
+              percentageDisplay.textContent = newPercentage + "%";
+              const newWidth = Math.round((containerWidth * newPercentage) / 100);
+              item.style.width = newWidth + "px";
+              widthPercentage += newPercentage;
+              widthSum += newWidth;
+            }
+          });
+          total = 100;
+        } else if (items.length > 1) {
+          // Always ensure last item fills remaining width exactly
+          let widthPercentage = 0;
+          let widthSum = 0;
+          items.forEach((item, idx) => {
+            const percentageDisplay = item.querySelector("div.absolute.bottom-2");
+            let percentage = parseInt(percentageDisplay.textContent);
+            if (idx === items.length - 1) {
+              percentage = 100 - widthPercentage;
+              percentageDisplay.textContent = percentage + "%";
+              item.style.width = containerWidth - widthSum + "px";
+            } else {
+              const newWidth = Math.round((containerWidth * percentage) / 100);
+              item.style.width = newWidth + "px";
+              widthSum += newWidth;
+              widthPercentage += percentage;
+            }
+          });
+          total = 100;
+        }
+
+        totalAllocated.textContent = total + "%";
+        remainingAllocation.textContent = 100 - total + "%";
+        totalAllocated.classList.remove("text-red-600");
+        remainingAllocation.classList.remove("text-red-600");
+      }
       // Reset allocation
       resetButton.addEventListener('click', function () {
         clonedItems.forEach(item => item.remove());
@@ -2055,11 +2100,11 @@
         document.querySelector('#investment-modal .modal-scroll').scrollTop = 0;
       
         if (disabled) {
-          addToPortfolioBtn.attributes.setNamedItem(document.createAttribute("disabled"));
           addToPortfolioBtn.classList.add("opacity-50", "cursor-not-allowed");
-        } else {
-          addToPortfolioBtn.classList.remove("opacity-50", "cursor-not-allowed");
+          addToPortfolioBtn.attributes.setNamedItem(document.createAttribute("disabled"));
+        } else if (addToPortfolioBtn.classList.contains("opacity-50")) {
           addToPortfolioBtn.attributes.removeNamedItem("disabled");
+          addToPortfolioBtn.classList.remove("opacity-50", "cursor-not-allowed");
         }
       }
       closeModalBtn.addEventListener('click', function () {
