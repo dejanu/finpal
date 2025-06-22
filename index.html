@@ -1288,15 +1288,20 @@
             const resizeHandle = document.createElement("div");
             resizeHandle.classList.add(
               "absolute",
-              "right-0",
               "top-0",
               "bottom-0",
-              "w-3",
+              "right-0",
+              "w-4",
               "bg-gray-300",
               "cursor-col-resize",
               "hover:bg-primary",
               "transition-colors",
             );
+            // Add this for a larger hit area without changing the visible width
+            resizeHandle.style.boxSizing = "content-box";
+            resizeHandle.style.pointerEvents = "all";
+            resizeHandle.style.zIndex = "10"; 
+
             previousItem?.appendChild(resizeHandle);
             // Update all items to fill the container width
             const updateItemWidths = () => {
