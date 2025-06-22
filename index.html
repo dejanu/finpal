@@ -1208,11 +1208,8 @@
         block.addEventListener('dragstart', function (e) {
           draggedItem = this;
           setTimeout(() => {
-            this.style.opacity = '0.5';
+            this.classList.add('opacity-50');
           }, 0);
-        });
-        block.addEventListener('dragend', function () {
-          this.style.opacity = '1';
         });
         // View details button click
         const viewDetailsBtn = block.querySelector('button');
@@ -1356,7 +1353,7 @@
             );
             viewDetailsBtn.innerHTML = '<i class="ri-information-line"></i>';
             viewDetailsBtn.addEventListener("click", function () {
-              openInvestmentModal(clone.dataset.type);
+              openInvestmentModal(clone.dataset.type, true);
             });
             // Add remove button
             const removeButton = document.createElement("button");
@@ -1379,6 +1376,7 @@
               previousItem?.removeChild(resizeHandle);
               clonedItems = clonedItems.filter((item) => item !== clone);
               updateAllocation();
+              updateBlockAvailability();
             });
             controlsContainer.appendChild(viewDetailsBtn);
             controlsContainer.appendChild(removeButton);
@@ -1386,6 +1384,7 @@
             // Add the clone to the investment area
             this.appendChild(clone);
             clonedItems.push(clone);
+            updateBlockAvailability();
             // Make the clone resizable
             let isResizing = false;
             let currentResizeItem = null;
@@ -1584,6 +1583,7 @@
         updateAllocation();
         riskProfileSection.classList.add('hidden');
         historicalPerformanceSection.classList.add('hidden');
+        updateBlockAvailability();
       });
       // Calculate risk profile
       calculateButton.addEventListener('click', function () {
@@ -1830,7 +1830,7 @@
       const investmentModal = document.getElementById('investment-modal');
       const closeModalBtn = document.getElementById('close-modal');
       const addToPortfolioBtn = document.getElementById('add-to-portfolio');
-      function openInvestmentModal(investmentType) {
+      function openInvestmentModal(investmentType, disabled = false) {
         const modalTitle = document.getElementById('modal-title');
         const modalIcon = document.getElementById('modal-icon');
         const modalRisk = document.getElementById('modal-risk');
@@ -2053,10 +2053,19 @@
           modalChart.resize();
         }, 100);
         document.querySelector('#investment-modal .modal-scroll').scrollTop = 0;
+      
+        if (disabled) {
+          addToPortfolioBtn.attributes.setNamedItem(document.createAttribute("disabled"));
+          addToPortfolioBtn.classList.add("opacity-50", "cursor-not-allowed");
+        } else {
+          addToPortfolioBtn.classList.remove("opacity-50", "cursor-not-allowed");
+          addToPortfolioBtn.attributes.removeNamedItem("disabled");
+        }
       }
       closeModalBtn.addEventListener('click', function () {
         investmentModal.classList.add('hidden');
       });
+
       addToPortfolioBtn.addEventListener('click', function () {
         // Find the investment type from the modal
         const investmentType = document.getElementById('modal-title').textContent;
@@ -2083,6 +2092,22 @@
           investmentModal.classList.add('hidden');
         }
       });
+      function updateBlockAvailability() {
+        // Get all types currently in allocation
+        const allocatedTypes = clonedItems.map(item => item.dataset.type);
+        investmentBlocks.forEach(block => {
+          const type = block.dataset.type;
+          const viewBtn = block.querySelector('button');
+          if (allocatedTypes.includes(type)) {
+            block.classList.add('opacity-50', 'pointer-events-none');
+            if (viewBtn) viewBtn.disabled = true;
+          } else {
+            block.classList.remove('opacity-50', 'pointer-events-none');
+            if (viewBtn) viewBtn.disabled = false;
+          }
+        });
+      }
+
       //// Update simulation button
       // document.getElementById('update-simulation').addEventListener('click', function () {
       //   // In a real application, this would update the chart with new data
