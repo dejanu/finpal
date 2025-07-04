@@ -665,10 +665,14 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 mt-6">
+          <div class="grid grid-cols-3 gap-4 mt-6">
             <div class="bg-white p-3 rounded-md shadow-sm">
               <span class="text-xs text-gray-500">Câștig S&P 500</span>
               <div id="total-invested-in-sp500" class="text-lg font-semibold text-green-600"></div>
+            </div>
+            <div class="bg-white p-3 rounded-md shadow-sm">
+              <span class="text-xs text-gray-500">Randament pe 5 ani S&P 500</span>
+              <div id="total-gain-sp500" class="text-lg font-semibold text-green-600"></div>
             </div>
             <div class="bg-white p-3 rounded-md shadow-sm">
               <span class="text-xs text-gray-500">Randament Anualizat S&P 500</span>
@@ -863,7 +867,7 @@
               <p class="text-xs text-gray-500 mt-2">Pe baza performanței istorice</p>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
-              <h5 class="font-medium text-gray-800 mb-2">Lichiditate</h5>
+              <h5 class="font-medium text-gray-800 mb-2">Simbol</h5>
               <p id="modal-liquidity" class="text-xl font-bold text-gray-900">Ridicată</p>
               <p class="text-xs text-gray-500 mt-2">Pot fi vândute rapid, cu pierderi minime</p>
             </div>
@@ -916,7 +920,7 @@
       'commodities': [18.79, -2.56, 0.39, 13.5, 26.35, 22.63]
     };
 
-    const snp500Returns = [1.54, 2.05, -1.58, 1.91, 1.8, 0.88];
+    const snp500Returns = [18.24, 24.61, -19.01, 22.87, 21.65, 7.07];
     const inflationRates = [-2.6, -5.1, -13.8, -10.4, -5.6, -5.02];
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -1684,7 +1688,7 @@
         let totalCurrentValue = 0;
         let totalInvested = 0;
         let totalGain = 0;
-        let snp500Value = investmentAmount * 60 * (1 + snp500Returns.reduce((a, b) => a + b, 0) / snp500Returns.length / 100);
+        let snp500Value = investmentAmount * 60 * (1 + snp500Returns.reduce((a, b) => a + b, 0) / 100);
         let snp500AnnualizedReturn = (snp500Returns.reduce((a, b) => a + b, 0) / snp500Returns.length).toFixed(1);
         let currentValueWithInflation = investmentAmount * 60 * (1 + inflationRates.reduce((a, b) => a + b, 0) / inflationRates.length / 100);
         let annualizedReturnWithInflationRate = inflationRates.reduce((a, b) => a + b, 0) / inflationRates.length;
@@ -1743,6 +1747,7 @@
         document.getElementById('current-value-with-inflation').textContent = new Intl.NumberFormat('ro-RO', { minimumFractionDigits: 0, maximumFractionDigits: 0, style: 'currency', currency: 'RON', useGrouping: true }).format(currentValueWithInflation);
         document.getElementById('current-value-with-gain-with-inflation').textContent = new Intl.NumberFormat('ro-RO', { minimumFractionDigits: 0, maximumFractionDigits: 0, style: 'currency', currency: 'RON', useGrouping: true }).format(totalCurrentValue + (totalCurrentValue * annualizedReturnWithInflationRate / 100));
         document.getElementById('total-invested-in-sp500-with-inflation').textContent = new Intl.NumberFormat('ro-RO', { minimumFractionDigits: 0, maximumFractionDigits: 0, style: 'currency', currency: 'RON', useGrouping: true }).format(snp500Value + (snp500Value * annualizedReturnWithInflationRate / 100));
+        document.getElementById('total-gain-sp500').textContent = snp500Returns.reduce((a, b) => a + b, 0).toFixed(1) + '%';
 
         // Calculate risk profile based on selected investments
         let totalRisk = 0;
@@ -1891,7 +1896,7 @@
             modalRiskBar.style.width = '20%';
             modalRiskPercentage.textContent = '20%';
             modalReturn.innerHTML = '4-8% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Ridicată';
+            modalLiquidity.textContent = 'Fidelis';
             modalRecommendations.innerHTML = `
       <li>Investitori conservatori care caută conservarea capitalului</li>
       <li>Pensionari care au nevoie de venituri stabile</li>
@@ -1914,7 +1919,7 @@
             modalRiskBar.style.width = '35%';
             modalRiskPercentage.textContent = '35%';
             modalReturn.innerHTML = '5-11% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Mediu-Ridicată';
+            modalLiquidity.textContent = 'Obligațiuni Corporative emise în ultimii 5 ani';
             modalRecommendations.innerHTML = `
       <li>Investitori care caută randamente mai mari decât obligațiunile guvernamentale</li>
       <li>Investitori axați pe venituri, confortabili cu un risc moderat</li>
@@ -1937,7 +1942,7 @@
             modalRiskBar.style.width = '50%';
             modalRiskPercentage.textContent = '50%';
             modalReturn.innerHTML = '-5% până la +37% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Ridicată';
+            modalLiquidity.textContent = 'TVBETETF';
             modalRecommendations.innerHTML = `
       <li>Investitori pe termen lung care caută randamente de piață</li>
       <li>Investitori atenți la costuri, care preferă gestionarea pasivă</li>
@@ -1960,7 +1965,7 @@
             modalRiskBar.style.width = '65%';
             modalRiskPercentage.textContent = '65%';
             modalReturn.innerHTML = '5-200% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Ridicată';
+            modalLiquidity.textContent = 'TLV + SNP + FP';
             modalRecommendations.innerHTML = `
       <li>Investitori axați pe creștere și venituri</li>
       <li>Strategii de construire a averii pe termen lung</li>
@@ -1983,7 +1988,7 @@
             modalRiskBar.style.width = '80%';
             modalRiskPercentage.textContent = '80%';
             modalReturn.innerHTML = '-27% până la +143% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Ridicată';
+            modalLiquidity.textContent = 'ATB + DIGI';
             modalRecommendations.innerHTML = `
       <li>Investitori agresivi în creștere</li>
       <li>Orizont de investiții lung (5+ ani)</li>
@@ -2006,7 +2011,7 @@
             modalRiskBar.style.width = '95%';
             modalRiskPercentage.textContent = '95%';
             modalReturn.innerHTML = '-83% până la +144% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Medie';
+            modalLiquidity.textContent = 'BTC';
             modalRecommendations.innerHTML = `
       <li>Investitori cu toleranță ridicată la risc</li>
       <li>Investitori cunoscători de tehnologie</li>
@@ -2029,7 +2034,7 @@
             modalRiskBar.style.width = '55%';
             modalRiskPercentage.textContent = '55%';
             modalReturn.innerHTML = '-25% până la 92% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Mediu-Ridicată';
+            modalLiquidity.textContent = 'REIT (Star Residence Invest)';
             modalRecommendations.innerHTML = `
       <li>Investitori axați pe venituri</li>
       <li>Căutători de expunere imobiliară</li>
@@ -2052,7 +2057,7 @@
             modalRiskBar.style.width = '75%';
             modalRiskPercentage.textContent = '75%';
             modalReturn.innerHTML = '-2.5% până la 26% <span class="text-sm font-normal text-gray-500">pe an</span>';
-            modalLiquidity.textContent = 'Medie';
+            modalLiquidity.textContent = 'Gold';
             modalRecommendations.innerHTML = `
       <li>Căutători de acoperire împotriva inflației</li>
       <li>Diversificarea portofoliului</li>
