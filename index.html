@@ -1310,7 +1310,7 @@
             content.classList.add("flex", "flex-col", "items-center", "space-y-2");
             const icon = draggedItem.querySelector(".w-10.h-10 i").cloneNode(true);
             const title = document.createElement("h4");
-            title.classList.add("font-medium");
+            title.classList.add("font-medium", "text-center");
             title.textContent = draggedItem.querySelector("h4").textContent;
             content.appendChild(icon);
             content.appendChild(title);
