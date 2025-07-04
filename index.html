@@ -1688,9 +1688,9 @@
         let totalCurrentValue = 0;
         let totalInvested = 0;
         let totalGain = 0;
-        let snp500Value = investmentAmount * 60 * (1 + snp500Returns.reduce((a, b) => a + b, 0) / 100);
+        let snp500Value = investmentAmount * 72 * (1 + snp500Returns.reduce((a, b) => a + b, 0) / 100);
         let snp500AnnualizedReturn = (snp500Returns.reduce((a, b) => a + b, 0) / snp500Returns.length).toFixed(1);
-        let currentValueWithInflation = investmentAmount * 60 * (1 + inflationRates.reduce((a, b) => a + b, 0) / inflationRates.length / 100);
+        let currentValueWithInflation = investmentAmount * 72 * (1 + inflationRates.reduce((a, b) => a + b, 0) / inflationRates.length / 100);
         let annualizedReturnWithInflationRate = inflationRates.reduce((a, b) => a + b, 0) / inflationRates.length;
 
         clonedItems.forEach(item => {
@@ -1708,11 +1708,11 @@
             fiveYearReturn = 'N/A';
           }
 
-          const currentValue = (monthlyAmount * 60 * (1 + fiveYearReturn / 100)).toFixed(2);
+          const currentValue = (monthlyAmount * 72 * (1 + fiveYearReturn / 100)).toFixed(2);
 
           totalCurrentValue += parseFloat(currentValue);
-          totalInvested += parseFloat(monthlyAmount) * 60;
-          totalGain += parseFloat(currentValue) - (parseFloat(monthlyAmount) * 60);
+          totalInvested += parseFloat(monthlyAmount) * 72;
+          totalGain += parseFloat(currentValue) - (parseFloat(monthlyAmount) * 72);
 
           const iconClass = getIconClassForType(investmentType);
           const iconBgClass = getIconBgClassForType(investmentType);
