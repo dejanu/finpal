@@ -58,8 +58,8 @@
 
       <form id="calcForm">
         <div class="mb-3" id="amountForm">
-          <label for="amount" class="form-label">Suma pe care vreau sa o scot la final</label>
-          <input type="number" class="form-control" id="amount" placeholder="Introdu suma in RON" required>
+          <label for="amount" class="form-label">Suma de 💵 pe care vreau sa o scot la final</label>
+          <input type="text" class="form-control" id="amount" placeholder="Introdu suma in RON" required>
         </div>
         <button type="submit" class="btn btn-success">Calculeaza</button>
       </form>
@@ -83,7 +83,8 @@
   // Calculate amount needed to invest based on user input
   document.querySelector('#calcForm').addEventListener('submit', function(event) {
     event.preventDefault();
-    const amount = parseFloat(document.querySelector('#amount').value);
+    // fix amount input to remove spaces and format correctly
+    const amount = parseFloat(document.querySelector('#amount').value.replace(/\s/g, ''));
     const randament = parseFloat(document.querySelector('#randament').value);
     const years = parseFloat(document.querySelector('#years').value);
     if (isNaN(amount) || isNaN(randament) || isNaN(years) || randament === 0 || years === 0) {
@@ -91,7 +92,15 @@
       return;
     }
     const amount_needed = amount / Math.pow((1 + randament / 100), years);
-    document.querySelector('#result').textContent = 'Ai nevoie de: ' + amount_needed.toFixed(2) + ' RON pentru a obtine ' + amount + ' RON';
+    document.querySelector('#result').textContent = 'Ai nevoie de: ' + amount_needed.toLocaleString('ro-RO', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' RON pentru a obtine ' + amount.toLocaleString('ro-RO') + ' RON';
+  });
+
+  // Format number input with thousands separators
+  document.querySelector('#amount').addEventListener('input', function(event) {
+    let value = event.target.value.replace(/\s/g, ''); // Remove existing spaces
+    if (/^\d+$/.test(value)) { // Only if it's all digits
+      event.target.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
   });
 </script>
 
